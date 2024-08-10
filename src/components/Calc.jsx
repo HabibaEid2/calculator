@@ -5,13 +5,12 @@ import squareRoot from './../assets/square-root.png'
 import { useState } from 'react';
 import { useRef } from 'react';
 export default function Calc() {
-    const [result , setResult] = useState(null) ;
+    const [result , setResult] = useState('0') ;
     const [displayOperations , setDisplayOperations] = useState([]) ; 
     const [operation_content , setOperation_content] = useState('') ; 
-    const [checkEqual , setCheckEqual] = useState(false) ; 
-
     const displayRef = useRef() ; 
 
+    // display operations on screen
     function getNum(e) {
         let value ; 
         switch(e.target.value) {
@@ -58,71 +57,127 @@ export default function Calc() {
                 break ; 
         }
         setDisplayOperations(prev => [...prev , value]) ; 
-        getOperation(e)
-    }
-    
-    function getOperation(e) {
         setOperation_content(prev => prev + e.target.value) ; 
     }
 
+    // check operation contain brackets or not and excute it first
+    function checkBrackets(value) {
+        let getBrackets = value.match(/[(][^\[^()\]]*[)]/ig) || [] ; 
 
+        for(let i of getBrackets) {
+            value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1))) ; 
+        }
 
-    function check () {
-
+        if(value.includes('(')) checkBrackets(string) ; 
+        else arrangeOperations(value)
     }
 
-    console.log(check('2 multiplication 3 plus (2 plus 6) minus 6')) 
-    //  2 * 3 + ( 2 + 6 ) - 6 ==> false : 8 , true ==>  
-    function deleteOne() {
-        setDisplayOperations(prev => prev.slice(0 , prev.length -1)) ; 
-        setOperation_content(prev => {
-            const arr = prev.split(' ') ; 
-            for(let i of arr) {
-                if (!isNaN(+i)) {
-                    i = i.slice(0 , i.length -1)
-                }
-                else arr.pop() ; 
-            }
+    // to arrange operations ( * | / ) from left and right and then ( + | - ) from left and right
+    function arrangeOperations (string) {
+        
+        // to remove brackets from values like (9 + 2) or (18)
+        if (string.includes('(')) string.replace('(' , '') ; 
+        if (string.includes(')')) string.replace(')' , '') ; 
 
-            return arr.join(' ') ; 
-        })
-
-    }
-    function deleteAll() {
-        setCheckEqual(false)
-        setDisplayOperations([]) ; 
-        setOperation_content('') ; 
-    }
-
-
-    function getResult(string) {
-        setCheckEqual(true) ; 
-        let result ; 
         const arr = string.split(' ') ;
-        for(let i = 0 ; i < arr.length ; i++) {
-            if (i === 0 ) {
-                result = +arr[0] ; 
+        let index ;
+        let slice ; 
+        let result ;
+
+        if (arr.includes('multiplication') || arr.includes('divition')) {
+
+            // excute which on left first
+
+            if (arr.lastIndexOf('multiplication') > arr.lastIndexOf('divition')) {
+                index = arr.lastIndexOf('multiplication') ; 
             }
             else {
-                switch(arr[i]) {
+                index = arr.lastIndexOf('divition') ; 
+            }
+
+            // get the single operations and get the result of them one by one
+            slice = arr.slice(index - 1 , index + 2) ; 
+            result = getResult(slice) ; 
+
+            // toggle the operation with its result
+            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
+        }
+
+        else if (arr.includes('plus') || arr.includes('minus')) {
+            if (arr.lastIndexOf('plus') > arr.lastIndexOf('minus')) {
+                index = arr.lastIndexOf('plus') ; 
+            }
+            else {
+                index = arr.lastIndexOf('minus') ; 
+            }
+            slice = arr.slice(index - 1 , index + 2) ; 
+            result = getResult(slice) ; 
+            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
+
+        }
+        else {
+            setResult(string) ; 
+            return string ; 
+        }
+    }
+
+    function getResult(problem) {
+        let result ; 
+
+        for(let i = 0 ; i < problem.length ; i++) {
+            if (i === 0 ) {
+                result = +problem[0] ; 
+            }
+            else {
+                switch(problem[i]) {
                     case 'multiplication' : 
-                        result *= +arr[i + 1]
+                        result *= +problem[i + 1]
                         break ; 
                     case 'plus' : 
-                        result += +arr[i + 1] ; 
+                        result += +problem[i + 1] ; 
                         break ; 
                     case 'minus' : 
-                        result -= +arr[i + 1] ; 
+                        result -= +problem[i + 1] ; 
                         break ; 
                     case 'divition' :  
-                        result /= +arr[i + 1] ; 
+                        result /= +problem[i + 1] ; 
                         break ; 
                 }
             }
         }
-        setResult(result) ; 
+
+        return result ; 
     }
 
+    function deleteOne() {
+
+        // delete from display screen
+        setDisplayOperations(prev => prev.slice(0 , prev.length -1)) ; 
+
+        // delete from the operation content that i get the result according to 
+        setOperation_content(prev => {
+            const arr = prev.split(' ').filter(ele => ele !==  '') ; 
+            let lastElement = arr[arr.length -1] ; 
+            if (!isNaN(+lastElement) && lastElement.length > 1) {
+
+                lastElement = lastElement.slice(0 , lastElement[arr.length -1]) ; 
+            }
+
+            else {
+                arr.pop() ; 
+
+                // to make a space between the new number and operation name
+                if (isNaN(+arr[arr.length -1])) arr[arr.length -1] = arr[arr.length -1] + ' ' ; 
+            }
+
+            return arr.join(' ') ; 
+        }) 
+    }
+    function deleteAll() {
+        setResult('0')
+        setDisplayOperations([]) ; 
+        setOperation_content('') ; 
+    }
     return (
         <div className="calculator">
             <div className="container">
@@ -137,29 +192,27 @@ export default function Calc() {
 
                     {/* operations */}
                     <div className="operation">
-                        <button className="ex">
+                        <button value=' xPowerY ' className="xPowerY">
                             <i className="fa-solid fa-x"></i>
                         </button>
-                        <button>10</button>
-                        <button>
+                        <button value=' tenPower ' className='tenPower'>10</button>
+                        <button value=' summition '>
                             <img src={sigma} alt="" />
                         </button>
                         <button 
-                        value=' factorial ' 
-                        onClick={getNum} 
-                        className='factorial'>
+                            value=' factorial ' 
+                            onClick={getNum} 
+                            className='factorial'>
                             <i className="fa-solid fa-x"></i> !
                         </button>
                         <button 
-                        value = ' ex-1 ' 
-                        onClick={getNum} 
-                        className='ex-1'>
+                            value = ' xPowerN1 ' 
+                            onClick={getNum} 
+                            className='xPowerN1'>
                             <i className="fa-solid fa-x"></i>
                             <sup>-1</sup>
                         </button>
-                        <button 
-                        value=' log ' 
-                        onClick={getNum} >log</button>
+                        <button value=' log ' onClick={getNum} >log</button>
                         <button className='logarithm'>
                             log<sub>x</sub>y
                         </button>
@@ -193,8 +246,8 @@ export default function Calc() {
                         <button value='7' onClick={getNum}>7</button>
                         <button value='8' onClick={getNum}>8</button>
                         <button value='9' onClick={getNum}>9</button>
-                        <button onClick={getNum}>(</button>
-                        <button onClick={getNum}>)</button>
+                        <button value = '(' onClick={getNum}>(</button>
+                        <button value = ')' onClick={getNum}>)</button>
                         <button value='4' onClick={getNum}>4</button>
                         <button value='5' onClick={getNum}>5</button>
                         <button value='6' onClick={getNum}>6</button>
@@ -221,7 +274,7 @@ export default function Calc() {
                         <button onClick={deleteAll} className='delete'>
                             AC
                         </button>
-                        <button onClick={() => getResult(operation_content)}>=</button>
+                        <button onClick={() => checkBrackets(operation_content)}>=</button>
                     </div>
                 </div>
 
@@ -229,3 +282,5 @@ export default function Calc() {
         </div>
     )
 }
+
+// 326

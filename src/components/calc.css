@@ -37,6 +37,8 @@
     right: 2px;
     padding: 5px;
 }
+
+/* components */
 .calculator button {
     font-size: inherit;
     font-family: inherit;
@@ -54,6 +56,8 @@
 .calculator img {
     width: 19px;
 }
+
+/* operations */
 .calculator .root {
     position: relative;
 }
@@ -73,8 +77,25 @@
     font-size: 11px;
     font-weight: bold;
 }
-.calculator .directions {
-    grid-template-columns: 1fr 1fr !important;
-    margin: 13px;
-    gap: 3px;
+.calculator .tenPower {
+    position: relative;
+}
+.calculator .tenPower::after {
+    content: '\58';
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    font-size: 13px;
+    font-weight: bold;
+}
+.calculator .xPowerY {
+    position: relative;
+}
+.calculator .xPowerY::after {
+    content: '\59';
+    position: absolute;
+    top: 8px;
+    right: 19px;
+    font-size: 12px;
+    font-weight: bold;
 }
