@@ -7,13 +7,19 @@ import { useRef } from 'react';
 export default function Calc() {
     const [result , setResult] = useState('0') ;
     const [displayOperations , setDisplayOperations] = useState([
-        <div className='index'></div>
+        <div value = "index" className='index'></div>
     ]) ; 
+    // const [operation_content , setOperation_content] = useState('') ; 
     const [operation_content , setOperation_content] = useState('') ; 
     const displayRef = useRef() ; 
 
+    const indexNumber = displayOperations.findIndex(ele => ele.props.value === 'index') ; 
+
     // display operations on screen
     function getNum(e) {
+        const index = displayOperations[displayOperations.length -1] ; 
+        const displayWithoutIndex = displayOperations.slice(0 , displayOperations.length-1) ;
+    
         let value ; 
         switch(e.target.value) {
             case ' plus ' :
@@ -62,8 +68,8 @@ export default function Calc() {
             default :value = <span>{e.target.value}</span> ; 
                 break ; 
         }
-        setDisplayOperations(prev => [...prev , value]) ; 
-        setOperation_content(prev => prev + e.target.value) ; 
+        setDisplayOperations(prev => [...displayWithoutIndex , value , index]) ; 
+        setOperation_content(prev => prev + e.target.value)
     }
 
     // check operation contain brackets or not and excute it first
@@ -128,6 +134,7 @@ export default function Calc() {
     }
 
     function getResult(problem) {
+        console.log('problem : ' , problem)
         let result ; 
 
         for(let i = 0 ; i < problem.length ; i++) {
@@ -156,33 +163,50 @@ export default function Calc() {
     }
 
     function deleteOne() {
+        setDisplayOperations(prev => prev.filter((ele , index) => index !== indexNumber -1)) ; 
 
-        // delete from display screen
-        setDisplayOperations(prev => prev.slice(0 , prev.length -1)) ; 
-
-        // delete from the operation content that i get the result according to 
         setOperation_content(prev => {
-            const arr = prev.split(' ').filter(ele => ele !==  '') ; 
-            let lastElement = arr[arr.length -1] ; 
-            if (!isNaN(+lastElement) && lastElement.length > 1) {
+            console.log('prev : ' , prev.split(' '))
+            const modifiedArr  = prev.split(' ').map(ele => {
+                console.log('ele : ' , ele) ; 
+                if (!(isNaN(+ele)) && ele.length > 1) {
+                    return ele.split('') ; 
+                } else if(ele !== '') {
+                    return ele ; 
+               }
+            })
 
-                lastElement = lastElement.slice(0 , lastElement[arr.length -1]) ; 
-            }
+            
 
-            else {
-                arr.pop() ; 
+            console.log('modified arr  : ' , modifiedArr)
 
-                // to make a space between the new number and operation name
-                if (isNaN(+arr[arr.length -1])) arr[arr.length -1] = arr[arr.length -1] + ' ' ; 
-            }
+            let arr = modifiedArr.filter(ele => ele !== undefined).flat().map((ele , index) => {
+                if (isNaN(ele) && index !== indexNumber -1) {
+                    return ` ${ele} `
+                }
+                else if (index !== indexNumber -1) {
+                    return ele ; 
+                } 
+                else return; 
+            }) ;
 
-            return arr.join(' ') ; 
+            console.log('arr : '  ,arr)
+            return arr.join('')  ;
+
         }) 
     }
+
     function deleteAll() {
         setResult('0')
-        setDisplayOperations([]) ; 
+        setDisplayOperations(prev => prev.filter(ele => ele.props.value === 'index')) ; 
         setOperation_content('') ; 
+    }
+
+    function goLeft() {
+        
+    }
+    function goRigth() {
+
     }
     return (
         <div className="calculator">
@@ -198,11 +222,11 @@ export default function Calc() {
 
                     {/* directions */}
                     <div className="directions">
-                        <button>
+                        <button onClick={goLeft}>
                             <i className="fa-solid fa-caret-left"></i>
                         </button>
 
-                        <button>
+                        <button onClick={getRigth}>
                             <i className="fa-solid fa-caret-right"></i>
                         </button>
                     </div>
@@ -300,4 +324,4 @@ export default function Calc() {
     )
 }
 
-// 326
+// 343
