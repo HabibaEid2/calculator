@@ -2,7 +2,7 @@ import './calc.css'
 import sigma from './../assets/sigma.png'
 import piIcon from './../assets/pi.png'
 import squareRoot from './../assets/square-root.png'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 export default function Calc() {
     const [result , setResult] = useState('0') ;
@@ -12,6 +12,7 @@ export default function Calc() {
     // const [operation_content , setOperation_content] = useState('') ; 
     const [operation_content , setOperation_content] = useState('') ; 
     const displayRef = useRef() ; 
+
 
     const indexNumber = displayOperations.findIndex(ele => ele.props.value === 'index') ; 
 
@@ -68,9 +69,36 @@ export default function Calc() {
             default :value = <span>{e.target.value}</span> ; 
                 break ; 
         }
-        setDisplayOperations(prev => [...displayWithoutIndex , value , index]) ; 
-        setOperation_content(prev => prev + e.target.value)
+        // setDisplayOperations(prev => [...displayWithoutIndex , value , index]) ; 
+        setDisplayOperations(prev => {
+            // displayOperations.splice(indexNumber , 0 , value) ; 
+
+            let arr = prev.slice(0 , indexNumber) ; 
+            arr.push(value) ; 
+
+
+            prev = [arr ,  prev.slice(indexNumber) ].flat()
+
+            // return prev ; 
+            return prev ; 
+        }) ; 
+        // setOperation_content(prev => prev + e.target.value)
+        setOperation_content(prev =>{
+            let arr = prev.split(' ').map((ele , index) => {
+                if (!isNaN(ele)) return ele = [...ele] ; 
+                else return ele ; 
+            }).flat()
+
+            arr.splice(indexNumber ,0 , e.target.value)
+            arr = arr.map(ele => {
+                if (isNaN(ele)) return ` ${ele} `
+                else return ele ; 
+            }).join('')
+            return arr ; 
+        })
     }
+
+    console.log('operation is : ' , operation_content.split(' '))
 
     // check operation contain brackets or not and excute it first
     function checkBrackets(value) {
@@ -91,7 +119,8 @@ export default function Calc() {
         if (string.includes('(')) string.replace('(' , '') ; 
         if (string.includes(')')) string.replace(')' , '') ; 
 
-        const arr = string.split(' ') ;
+        const arr = string.split(' ').filter(ele => ele !== '') ;
+
         let index ;
         let slice ; 
         let result ;
@@ -134,7 +163,6 @@ export default function Calc() {
     }
 
     function getResult(problem) {
-        console.log('problem : ' , problem)
         let result ; 
 
         for(let i = 0 ; i < problem.length ; i++) {
@@ -166,9 +194,7 @@ export default function Calc() {
         setDisplayOperations(prev => prev.filter((ele , index) => index !== indexNumber -1)) ; 
 
         setOperation_content(prev => {
-            console.log('prev : ' , prev.split(' '))
             const modifiedArr  = prev.split(' ').map(ele => {
-                console.log('ele : ' , ele) ; 
                 if (!(isNaN(+ele)) && ele.length > 1) {
                     return ele.split('') ; 
                 } else if(ele !== '') {
@@ -177,8 +203,6 @@ export default function Calc() {
             })
 
             
-
-            console.log('modified arr  : ' , modifiedArr)
 
             let arr = modifiedArr.filter(ele => ele !== undefined).flat().map((ele , index) => {
                 if (isNaN(ele) && index !== indexNumber -1) {
@@ -190,7 +214,6 @@ export default function Calc() {
                 else return; 
             }) ;
 
-            console.log('arr : '  ,arr)
             return arr.join('')  ;
 
         }) 
@@ -202,12 +225,44 @@ export default function Calc() {
         setOperation_content('') ; 
     }
 
-    function goLeft() {
-        
-    }
-    function goRigth() {
 
+    function goLeft() {
+
+        setDisplayOperations(prev => {
+
+            let arr = prev.map((ele , index) => {
+                if (indexNumber === 0) return ele ; 
+                if (index === indexNumber && indexNumber !== 0) {
+                    return prev[indexNumber -1]
+                } 
+                else if (index === indexNumber -1 && indexNumber !== 0) {
+                    return prev[indexNumber]
+                } 
+                else return ele ; 
+            })
+
+            return arr ; 
+
+        })
     }
+
+    function goRight() {
+        setDisplayOperations(prev => {
+            let arr = prev.map((ele , index) => {
+                if (index === indexNumber && indexNumber !== prev.length -1) {
+                    return prev[indexNumber +1]
+                } 
+                else if (index === indexNumber +1 && indexNumber !== prev.length -1) {
+                    return prev[indexNumber]
+                } 
+                else return ele ; 
+            })
+
+            return arr ; 
+
+        })
+    }
+
     return (
         <div className="calculator">
             <div className="container">
@@ -226,7 +281,7 @@ export default function Calc() {
                             <i className="fa-solid fa-caret-left"></i>
                         </button>
 
-                        <button onClick={getRigth}>
+                        <button onClick={goRight}>
                             <i className="fa-solid fa-caret-right"></i>
                         </button>
                     </div>
@@ -324,4 +379,4 @@ export default function Calc() {
     )
 }
 
-// 343
+// 375
