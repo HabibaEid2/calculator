@@ -1,3 +1,22 @@
+/* components */
+.calculator button {
+    font-size: inherit;
+    font-family: inherit;
+    padding: 10px;
+    cursor: pointer;
+}
+.calculator i:not(.bold) {
+    font-size: 20px;
+    font-weight: normal;
+}
+.calculator .buttons > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+.calculator img {
+    width: 19px;
+}
+/* main */
 .calculator {
     min-height: 100vh;
     display: flex;
@@ -11,8 +30,9 @@
     font-size: 22px;
     font-family: "Marcellus", serif;;
 }
+/* display */
 .calculator .container .display {
-    height: 130px;
+    height: 108px;
     background-color: #c9c9c9;
     position: relative;
     padding: 10px;
@@ -37,26 +57,25 @@
     right: 2px;
     padding: 5px;
 }
-
-/* components */
-.calculator button {
-    font-size: inherit;
-    font-family: inherit;
-    padding: 10px;
-    cursor: pointer;
+.calculator .display .index {
+    width: 1px;
+    height: 20px;
+    background-color: black;
+    animation: flutter .7s infinite;
+    -webkit-animation: flutter .4s alternate-reverse infinite;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in;
+    -moz-animation-timing-function: ease-in;
 }
-.calculator i:not(.bold) {
-    font-size: 20px;
-    font-weight: normal;
+/* directions */
+.calculator .directions {
+    grid-template-columns: auto auto;
+    margin: 10px;
+    gap: 15px;
 }
-.calculator .buttons > div {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+.calculator .directions i {
+    font-weight: bold;
 }
-.calculator img {
-    width: 19px;
-}
-
 /* operations */
 .calculator .root {
     position: relative;
@@ -98,4 +117,15 @@
     right: 19px;
     font-size: 12px;
     font-weight: bold;
+}
+
+/* animations */
+@keyframes flutter {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }

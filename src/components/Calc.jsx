@@ -6,7 +6,9 @@ import { useState } from 'react';
 import { useRef } from 'react';
 export default function Calc() {
     const [result , setResult] = useState('0') ;
-    const [displayOperations , setDisplayOperations] = useState([]) ; 
+    const [displayOperations , setDisplayOperations] = useState([
+        <div className='index'></div>
+    ]) ; 
     const [operation_content , setOperation_content] = useState('') ; 
     const displayRef = useRef() ; 
 
@@ -31,7 +33,11 @@ export default function Calc() {
                 <div>
                     <i className="bold fa-solid fa-divide"></i>
                 </div>
-                break ; 
+                break ;
+            case ' xPowerY ' : 
+                <div className='xPowerY-display'>
+
+                </div>
             case ' factorial ' : 
                 value = 
                 <div>
@@ -190,13 +196,24 @@ export default function Calc() {
                 </div>
                 <div className="buttons">
 
+                    {/* directions */}
+                    <div className="directions">
+                        <button>
+                            <i className="fa-solid fa-caret-left"></i>
+                        </button>
+
+                        <button>
+                            <i className="fa-solid fa-caret-right"></i>
+                        </button>
+                    </div>
+
                     {/* operations */}
                     <div className="operation">
-                        <button value=' xPowerY ' className="xPowerY">
+                        <button value=' xPowerY ' className="xPowerY" onClick={getNum}>
                             <i className="fa-solid fa-x"></i>
                         </button>
-                        <button value=' tenPower ' className='tenPower'>10</button>
-                        <button value=' summition '>
+                        <button value=' tenPower ' className='tenPower' onClick={getNum}>10</button>
+                        <button value=' summition ' onClick={getNum}>
                             <img src={sigma} alt="" />
                         </button>
                         <button 
@@ -213,24 +230,24 @@ export default function Calc() {
                             <sup>-1</sup>
                         </button>
                         <button value=' log ' onClick={getNum} >log</button>
-                        <button className='logarithm'>
+                        <button value=' logWithX_Y' className='logarithm' onClick={getNum}>
                             log<sub>x</sub>y
                         </button>
                         <button 
-                        value=' pi '
-                        onClick={getNum} >
+                            value=' pi '
+                            onClick={getNum} >
                             <img src={piIcon} alt="" />
                         </button>
                         <button 
-                        value=' square-root ' 
-                        onClick={getNum} 
-                        className='root'>
+                            value=' square-root ' 
+                            onClick={getNum} 
+                            className='root'>
                             <img src={squareRoot} alt="" />
                         </button>
                         <button 
-                        value=' anonymous-root ' 
-                        onClick={getNum} 
-                        className='root with-y-number'>
+                            value=' anonymous-root ' 
+                            onClick={getNum} 
+                            className='root with-y-number'>
                             <img src={squareRoot} alt="" />
                         </button>
                         <button>(-)</button>
