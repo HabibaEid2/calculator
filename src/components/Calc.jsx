@@ -6,28 +6,23 @@ import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 export default function Calc() {
     const [result , setResult] = useState('0') ;
-    const [displayOperations , setDisplayOperations] = useState([
-        <div value = "index" className='index'></div>
-    ]) ; 
-    // const [operation_content , setOperation_content] = useState('') ; 
+    const [displayOperations , setDisplayOperations] = useState([<div value = "index" className='index'></div>]) ; 
     const [operation_content , setOperation_content] = useState('') ; 
     const displayRef = useRef() ; 
-
-
+    
     const indexNumber = displayOperations.findIndex(ele => ele.props.value === 'index') ; 
-
     // display operations on screen
     function getNum(e) {
-        const index = displayOperations[displayOperations.length -1] ; 
-        const displayWithoutIndex = displayOperations.slice(0 , displayOperations.length-1) ;
-    
-        let value ; 
+
+        let value = [] ; 
         switch(e.target.value) {
             case ' plus ' :
-                value = <span>+</span>
+                // value = <span>+</span>
+                value.push(<span>+</span>)
                 break ; 
             case ' minus ' : 
-                value = <span>-</span>
+                // value = <span>-</span>
+                value.push(<span>-</span>)
                 break ; 
             case ' multiplication ' : 
                 value = 
@@ -42,9 +37,8 @@ export default function Calc() {
                 </div>
                 break ;
             case ' xPowerY ' : 
-                <div className='xPowerY-display'>
-
-                </div>
+                value.push(<div className="xElement"></div> , <div className="power yElement"></div> , <div></div>)
+                break ; 
             case ' factorial ' : 
                 value = 
                 <div>
@@ -67,38 +61,52 @@ export default function Calc() {
                 value = <span>tan</span> ; 
                 break ;
             default :value = <span>{e.target.value}</span> ; 
-                break ; 
+                break ;
         }
-        // setDisplayOperations(prev => [...displayWithoutIndex , value , index]) ; 
         setDisplayOperations(prev => {
-            // displayOperations.splice(indexNumber , 0 , value) ; 
-
             let arr = prev.slice(0 , indexNumber) ; 
-            arr.push(value) ; 
+            if (arr[arr.length -1]?.props?.className?.includes('xElement')) {
+                arr[arr.length -1] =  value ; 
+            }
+            else if (arr[arr.length -1]?.props?.className?.includes('yElement')) {
+                arr[arr.length -1] =  <span className='power yValue'>{e.target.value}</span> ; 
+            }
+            else if (arr[arr.length -1]?.props?.className?.includes('yValue')) {
+                arr.push(<span className='power yValue'>{e.target.value}</span>) ; 
+            }
+            else arr.push(value) ;
+            prev = [arr.flat() ,  prev.slice(indexNumber) ].flat()
 
-
-            prev = [arr ,  prev.slice(indexNumber) ].flat()
-
-            // return prev ; 
-            return prev ; 
+            return prev.flat() ; 
         }) ; 
-        // setOperation_content(prev => prev + e.target.value)
-        setOperation_content(prev =>{
+
+        setOperation_content(prev => {
             let arr = prev.split(' ').map((ele , index) => {
                 if (!isNaN(ele)) return ele = [...ele] ; 
                 else return ele ; 
             }).flat()
 
-            arr.splice(indexNumber ,0 , e.target.value)
+
+            const index = arr.filter(ele => ele !== '').findIndex(ele => ele === 'xPowerY') ; 
+            if (displayOperations[indexNumber-1]?.props?.className?.includes('xElement')) {
+                console.log('index : ' , index)
+                arr.splice(index , 0 , e.target.value) ; 
+            }
+
+            else if(displayOperations[indexNumber-1]?.props?.className?.includes('yElement')) {
+                arr.splice(index + 1 , 0 , e.target.value) ; 
+            }
+            else arr.splice(indexNumber ,0 , e.target.value) ; 
+            
             arr = arr.map(ele => {
                 if (isNaN(ele)) return ` ${ele} `
                 else return ele ; 
             }).join('')
+
+            
             return arr ; 
         })
     }
-
-    console.log('operation is : ' , operation_content.split(' '))
 
     // check operation contain brackets or not and excute it first
     function checkBrackets(value) {
@@ -111,6 +119,7 @@ export default function Calc() {
         if(value.includes('(')) checkBrackets(string) ; 
         else arrangeOperations(value)
     }
+
 
     // to arrange operations ( * | / ) from left and right and then ( + | - ) from left and right
     function arrangeOperations (string) {
@@ -125,7 +134,17 @@ export default function Calc() {
         let slice ; 
         let result ;
 
-        if (arr.includes('multiplication') || arr.includes('divition')) {
+        console.log('arr : ' , arr)
+
+        if (arr.includes('xPowerY') ) {
+            index = arr.indexOf('xPowerY')
+            slice = arr.slice(index - 1 , index + 2)
+            result = getResult(slice) ; 
+
+            // toggle the operation with its result
+            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
+        }
+        else if (arr.includes('multiplication') || arr.includes('divition')) {
 
             // excute which on left first
 
@@ -163,6 +182,8 @@ export default function Calc() {
     }
 
     function getResult(problem) {
+
+        console.log('problem is : ' , problem)
         let result ; 
 
         for(let i = 0 ; i < problem.length ; i++) {
@@ -183,6 +204,8 @@ export default function Calc() {
                     case 'divition' :  
                         result /= +problem[i + 1] ; 
                         break ; 
+                    case 'xPowerY' : 
+                        result = Math.pow(result , problem[i + 1])
                 }
             }
         }
@@ -225,7 +248,6 @@ export default function Calc() {
         setOperation_content('') ; 
     }
 
-
     function goLeft() {
 
         setDisplayOperations(prev => {
@@ -262,6 +284,28 @@ export default function Calc() {
 
         })
     }
+
+    // useEffect(() => {
+        if (
+            displayOperations[indexNumber -1]?.props.className?.includes('power') &&
+            displayOperations[indexNumber]?.props.className !== 'index indexAfterPower'
+        ) {
+            console.log('yes it is ')
+            setDisplayOperations(prev => {
+                prev.splice(indexNumber , 1 , <div value = "index" className='index indexAfterPower'></div>) ; 
+                return prev ; 
+            })
+        }
+        else if (
+            !displayOperations[indexNumber -1]?.props.className?.includes('power') &&
+            displayOperations[indexNumber]?.props.className !== 'index'
+        )  {
+            setDisplayOperations(prev => {
+                prev.splice(indexNumber , 1 , <div value = "index" className='index'></div>) ; 
+                return prev ; 
+            })
+        }
+    // } )
 
     return (
         <div className="calculator">
@@ -379,4 +423,4 @@ export default function Calc() {
     )
 }
 
-// 375
+// 430

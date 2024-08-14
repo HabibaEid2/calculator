@@ -59,13 +59,18 @@
 }
 .calculator .display .index {
     width: 1px;
-    height: 20px;
+    height: 22px;
     background-color: black;
+    margin-top: 2px;
     animation: flutter .7s infinite;
     -webkit-animation: flutter .4s alternate-reverse infinite;
     animation-fill-mode: both;
     animation-timing-function: ease-in;
     -moz-animation-timing-function: ease-in;
+}
+.calculator .display .index.indexAfterPower {
+    height: 13px;
+    margin-top: -5px;
 }
 /* directions */
 .calculator .directions {
@@ -119,6 +124,29 @@
     font-weight: bold;
 }
 
+/* operations in display */
+.calculator .xPowerY-display {
+    width: 30px;
+}
+.calculator  .xElement {
+    width: 15px;
+    height: 21px;
+    border: solid 1px;
+    margin-top: 3px;
+}
+.calculator  .yElement {
+    width: 11px;
+    height: 13px;
+    border: solid 1px;
+    margin: -4px 2px;
+    font-size: 13px;
+}
+.calculator  .yValue {
+    width: 11px;
+    height: 13px;
+    margin: -4px -2px -4px 3px;
+    font-size: 13px;
+}
 /* animations */
 @keyframes flutter {
     0% {
