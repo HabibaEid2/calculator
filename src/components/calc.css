@@ -147,6 +147,15 @@
     margin: -4px -2px -4px 3px;
     font-size: 13px;
 }
+.calculator .display-factorial {
+    position: relative;
+}
+.calculator .display-factorial::after {
+    content: '\21';
+    position: absolute;
+    top: -4px;
+    right: -9px;
+}
 /* animations */
 @keyframes flutter {
     0% {
