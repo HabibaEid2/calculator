@@ -1,352 +1,32 @@
 import './calc.css'
-import sigma from './../assets/sigma.png'
 import piIcon from './../assets/pi.png'
 import squareRoot from './../assets/square-root.png'
-import { useRef ,useState } from 'react';
+import { useContext, useRef  } from 'react';
+import { data } from '../context/Context';
+import getNum from '../functions/getNum';
+import deleteOneEle from '../functions/deleteOneEle';
+import arrangeOperations from '../functions/arrangeOperations';
+import deleteAll from '../functions/deleteAllEles';
+import deleteAllEles from '../functions/deleteAllEles';
 
 export default function Calc() {
-    const [result , setResult] = useState('0') ;
-    const [displayOperations , setDisplayOperations] = useState([<div value = "index" className='index'></div>]) ; 
-    const [operation_content , setOperation_content] = useState('') ; 
     const displayRef = useRef() ; 
-    
-    // get index of index element in screen
-    const indexNumber = displayOperations?.findIndex(ele => ele?.props?.value === 'index') ; 
-
-    function getNum(e) {
-    // display operations on screen
-        let value = [] ; 
-        switch(e.target.value) {
-            case ' plus ' :
-                value.push(<span>+</span>)
-                break ; 
-            case ' minus ' : 
-                value.push(<span>-</span>)
-                break ; 
-            case ' multiplication ' : 
-                value.push(
-                    <div>
-                        <i className="fa-solid fa-x"></i>
-                    </div>
-                )
-                break ; 
-            case ' divition ' : 
-                value.push(
-                    <div>
-                        <i className="bold fa-solid fa-divide"></i>
-                    </div>
-                )
-                break ;
-            case ' xPowerY ' : 
-                value.push( 
-                    <div className="xElement"></div> ,
-                    <div className="power yElement"></div> ,
-                    <div></div> 
-                )
-                break ; 
-            case ' factorial ' : 
-                value.push( <div className='xElement display-factorial'></div> ) 
-                break ; 
-            case ' tenPower ' : 
-                value.push(
-                    <span>10</span> , 
-                    <span className='power yElement'></span> , 
-                    <div></div>
-                )
-                break ; 
-            case ' pi ' : 
-                value.push(
-                    <div>
-                        <img src={piIcon} alt="" />
-                    </div>
-                )
-                break ; 
-            default :
-                value.push(<span>{e.target.value.trim()}</span>) 
-                break ;
-        }
-        setDisplayOperations(prev => {
-            let arr = prev.slice(0 , indexNumber) ; 
-            
-            if (arr[arr.length -1]?.props?.className?.includes('xElement')) {
-                if (arr[arr.length -1]?.props?.className?.includes('display-factorial')) {
-                    arr[arr.length -1] =  <div className='display-factorial'>{e.target.value}</div> ; 
-                }
-                else arr[arr.length -1] =  <span className='xValue'>{e.target.value}</span> ; 
-            }
-            else if (arr[arr.length -1]?.props?.className?.includes('xValue')) {
-                arr.push(<span className='xValue'>{e.target.value}</span>) ; 
-            }
-            else if (arr[arr.length -1]?.props?.className?.includes('yElement')) {
-                arr[arr.length -1] =  <span className='power yValue'>{e.target.value}</span> ; 
-            }
-            else if (arr[arr.length -1]?.props?.className?.includes('yValue')) {
-                arr.push(<span className='power yValue'>{e.target.value}</span>) ; 
-            }
-            else if (arr[arr.length -1]?.props?.className?.includes('display-factorial')) {
-
-                // to put the exclamation icon after the last number of factorial
-                const prevEle = arr[arr.length -1]?.props?.children ; 
-                arr.splice(arr.length -1 , 1 ,[
-                    <span>{prevEle}</span> , 
-                    <div className='display-factorial'>{e.target.value}</div>
-                ])
-            }
-            else arr.push(value) ;
-            
-            prev = [arr.flat() ,  prev.slice(indexNumber) ].flat()
-
-            // return prev.flat() ; 
-            return prev; 
-        }) ; 
-
-        setOperation_content(prev => {
-            let arr = prev.split(' ').map(ele => {
-                if (!isNaN(ele)) return ele = [...ele] ; 
-                else return ele ; 
-            }).flat() 
-
-            const value = displayOperations[indexNumber -1]?.props ; 
-
-            if (arr.includes('xPowerY') || arr.includes('factorial')) {
-
-                if(value?.className?.includes('display-factorial')) {
-                    arr.splice(indexNumber + 1 , 0 , e.target.value) ; 
-                }
-                else if (arr.includes('xPowerY')) {
-                    const index = arr.filter(ele => ele !== '').findIndex(ele => ele === 'xPowerY') ; 
-
-                    if (value?.className?.includes('xElement')) {
-                        arr.splice(index , 0 , e.target.value) ; 
-                    }
-    
-                    else if(value?.className?.includes('yElement')) {
-                        arr.splice(index + 1 , 0 , e.target.value) ; 
-                    }
-                    else if (value?.className?.includes('yValue')) {
-                        arr.splice(indexNumber + 1 ,0 , e.target.value) ; 
-                    }
-                    else arr.splice(indexNumber ,0 , e.target.value) ; 
-                }
-                else arr.splice(indexNumber ,0 , e.target.value) ; 
-            }
-            else arr.splice(indexNumber ,0 , e.target.value) ; 
-
-            arr = arr.map(ele => {
-                if (isNaN(ele)) return ` ${ele} `
-                else return ele ; 
-            }).join('')
-
-            
-            return arr ; 
-        })
-    } ; 
+    const context = useContext(data) ; 
+    const indexNumber = context.displayOperations?.findIndex(ele => ele?.props?.value === 'index') ; 
 
     // check operation contain brackets or not and excute it first
     function checkBrackets(value) {
         let getBrackets = value.match(/[(][^\[^()\]]*[)]/ig) || [] ; 
-
         for(let i of getBrackets) {
-            value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1))) ; 
+            value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1)) , context) ; 
         }
-
         if(value.includes('(')) checkBrackets(string) ; 
-        else arrangeOperations(value)
-    }
-
-    // to arrange operations ( * | / ) from left and right and then ( + | - ) from left and right
-    function arrangeOperations (string) {
-        
-        // to remove brackets from values like (9 + 2) or (18)
-        if (string.includes('(')) string.replace('(' , '') ; 
-        if (string.includes(')')) string.replace(')' , '') ; 
-
-        const arr = string.split(' ').filter(ele => ele !== '') ;
-
-        let index ;
-        let slice ; 
-        let result ;
-
-        if (arr.includes('xPowerY') ) {
-            index = arr.indexOf('xPowerY')
-            slice = arr.slice(index - 1 , index + 2)
-            result = getResult(slice) ; 
-
-            // toggle the operation with its result
-            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
-        }
-        else if (arr.includes('factorial')) {
-            index = arr.indexOf('factorial')
-            slice = arr.slice(index , index + 2)
-            result = getResult(slice) ; 
-
-            // toggle the operation with its result
-            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
-        }
-        else if (arr.includes('multiplication') || arr.includes('divition')) {
-
-            // excute which on left first
-
-            if (arr.lastIndexOf('multiplication') > arr.lastIndexOf('divition')) {
-                index = arr.lastIndexOf('multiplication') ; 
-            }
-            else {
-                index = arr.lastIndexOf('divition') ; 
-            }
-
-            // get the single operations and get the result of them one by one
-            slice = arr.slice(index - 1 , index + 2) ; 
-            result = getResult(slice) ; 
-
-            // toggle the operation with its result
-            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
-        }
-
-        else if (arr.includes('plus') || arr.includes('minus')) {
-            if (arr.lastIndexOf('plus') > arr.lastIndexOf('minus')) {
-                index = arr.lastIndexOf('plus') ; 
-            }
-            else {
-                index = arr.lastIndexOf('minus') ; 
-            }
-            slice = arr.slice(index - 1 , index + 2) ; 
-            result = getResult(slice) ; 
-            return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result))
-
-        }
-        else {
-            setResult(string) ; 
-            return string ; 
-        }
-    }
-
-    function getResult(problem) {
-
-        let result ; 
-
-        for(let i = 0 ; i < problem.length ; i++) {
-            if (i === 0 && !isNaN(problem[i])) {
-                result = +problem[0] ; 
-            }
-            else {
-                switch(problem[i]) {
-                    case 'multiplication' : 
-                        result *= +problem[i + 1]
-                        break ; 
-                    case 'plus' : 
-                        result += +problem[i + 1] ; 
-                        break ; 
-                    case 'minus' : 
-                        result -= +problem[i + 1] ; 
-                        break ; 
-                    case 'divition' :  
-                        result /= +problem[i + 1] ; 
-                        break ; 
-                    case 'xPowerY' : 
-                        result = Math.pow(result , problem[i + 1])
-                        break ;
-                    case 'factorial' : 
-                        result = +problem[i + 1]; 
-                        for(let i = result-1 ; i >= 1 ; i--) {
-                            result *= i ; 
-                        }
-                        break ; 
-                }
-            }
-        }
-
-        return result ; 
-    }
-
-    function deleteOne() {
-        setDisplayOperations(prev => {
-
-            if (
-                prev[indexNumber -1]?.props?.className?.includes('xValue') && 
-                !prev[indexNumber -2]?.props?.className?.includes('xValue')
-            ) {
-
-                prev = prev.map((ele , index) => {
-                    if (index === indexNumber -1) {
-                        return <span className='xElement'></span>; 
-                    }
-                    else return ele ; 
-                })
-            }
-
-            else if (
-                (
-                    prev[indexNumber -1]?.props?.className?.includes('yValue') ||
-                    prev[indexNumber -1]?.props === null
-                )
-                && 
-                !prev[indexNumber -2]?.props?.className?.includes('yValue')
-            ) {
-
-                prev = prev.map((ele , index) => {
-                    if (index === indexNumber -1) {
-                        return <span className='power yElement'></span>; 
-                    }
-                    else return ele ; 
-                })
-            }
-
-            else if (
-                prev[indexNumber -1]?.props?.className  ===  'display-factorial'  &&
-                (isNaN(+prev[indexNumber -2]?.props?.children) || indexNumber === 1)
-            ) {
-                prev = prev.map((ele , index) => {
-                    if (index === indexNumber -1) {
-                        return <span className='display-factorial xElement'></span>;  
-                    }
-                    else return ele ; 
-                })
-            }
-
-            else prev = prev.filter((ele , i) => i !== indexNumber -1) ; 
-
-            
-
-            return prev ; 
-
-        }) ; 
-
-        setOperation_content(prev => {
-
-
-            const modifiedArr  = prev.split(' ').map(ele => {
-                if (!(isNaN(+ele)) && ele.length > 1) {
-                    return ele.split('') ; 
-                } else if(ele !== '') {
-                    return ele ; 
-                }
-            })
-
-            let arr = modifiedArr.filter(ele => ele !== undefined).flat() ; 
-            
-            if(
-                displayOperations[indexNumber -1]?.props?.className.includes('power')  
-
-            ) {
-                arr = arr.filter((ele , index) => index !== indexNumber)
-            } 
-            else arr = arr.filter((ele , index) => index !== indexNumber -1)  
-
-            return arr.join(' ')  ;
-
-        }) 
-    }
-
-    console.log('operation content : ' , operation_content)
-    function deleteAll() {
-        setResult('0')
-        setDisplayOperations(prev => prev.filter(ele => ele.props.value === 'index')) ; 
-        setOperation_content('') ; 
+        else arrangeOperations(value , context)
     }
 
     function goLeft() {
 
-        setDisplayOperations(prev => {
+        context.setDisplayOperations(prev => {
 
             let arr = prev.map((ele , index) => {
                 if (indexNumber === 0) return ele ; 
@@ -365,7 +45,7 @@ export default function Calc() {
     }
 
     function goRight() {
-        setDisplayOperations(prev => {
+        context.setDisplayOperations(prev => {
             let arr = prev.map((ele , index) => {
                 if (index === indexNumber && indexNumber !== prev.length -1) {
                     return prev[indexNumber +1]
@@ -381,26 +61,32 @@ export default function Calc() {
         })
     }
 
-    // useEffect(() => {
-        if (
-            displayOperations[indexNumber -1]?.props.className?.includes('power') &&
-            displayOperations[indexNumber]?.props.className !== 'index indexAfterPower'
-        ) {
-            setDisplayOperations(prev => {
-                prev.splice(indexNumber , 1 , <div value = "index" className='index indexAfterPower'></div>) ; 
+    if (
+        context.displayOperations[indexNumber -1]?.props.className?.includes('power ') &&
+        !context.displayOperations[indexNumber]?.props.className.includes('modify')
+    ) {
+
+        if (context.displayOperations[indexNumber -1]?.props.className?.includes('down')) {
+            context.setDisplayOperations(prev => {
+                prev.splice(indexNumber , 1 , <div value = "index" className='index modify logBase'></div>) ; 
                 return prev ; 
             })
         }
-        else if (
-            !displayOperations[indexNumber -1]?.props.className?.includes('power') &&
-            displayOperations[indexNumber]?.props.className !== 'index'
-        )  {
-            setDisplayOperations(prev => {
-                prev.splice(indexNumber , 1 , <div value = "index" className='index'></div>) ; 
-                return prev ; 
-            })
-        }
-    // } )
+
+        else context.setDisplayOperations(prev => {
+            prev.splice(indexNumber , 1 , <div value = "index" className='index modify indexAfterPower'></div>) ; 
+            return prev ; 
+        })
+    }
+    else if (
+        !context.displayOperations[indexNumber -1]?.props.className?.includes('power') &&
+        context.displayOperations[indexNumber]?.props.className !== 'index'
+    )  {
+        context.setDisplayOperations(prev => {
+            prev.splice(indexNumber , 1 , <div value = "index" className='index'></div>) ; 
+            return prev ; 
+        })
+    }
 
     return (
         <div className="calculator">
@@ -408,9 +94,9 @@ export default function Calc() {
 
                 <div className="display">
                     <div ref={displayRef} className="display-operations">
-                        {displayOperations}
+                        {context.displayOperations}
                     </div>
-                    <div className="result"> {result} = </div>
+                    <div className="result"> {context.result} = </div>
                 </div>
                 <div className="buttons">
 
@@ -427,89 +113,89 @@ export default function Calc() {
 
                     {/* operations */}
                     <div className="operation">
-                        <button value=' xPowerY ' className="xPowerY" onClick={getNum}>
+                        <button value=' xPowerY ' className="xPowerY" onClick={(e) => getNum(e , context)}>
                             <i className="fa-solid fa-x"></i>
                         </button>
-                        <button value=' tenPower ' className='tenPower' onClick={getNum}>10</button>
-                        <button value=' summition ' onClick={getNum}>
-                            <img src={sigma} alt="" />
-                        </button>
+                        <button value=' tenPower ' className='tenPower' onClick={(e) => getNum(e , context)}>10</button>
                         <button 
                             value=' factorial ' 
-                            onClick={getNum} 
+                            onClick={(e) => getNum(e , context)} 
                             className='factorial'>
                             <i className="fa-solid fa-x"></i> !
                         </button>
                         <button 
                             value = ' xPowerN1 ' 
-                            onClick={getNum} 
+                            onClick={(e) => getNum(e , context)} 
                             className='xPowerN1'>
                             <i className="fa-solid fa-x"></i>
                             <sup>-1</sup>
                         </button>
-                        <button value=' log ' onClick={getNum} >log</button>
-                        <button value=' logWithX_Y' className='logarithm' onClick={getNum}>
+                        <button value=' log ' onClick={(e) => getNum(e , context)} >log</button>
+                        <button value=' xLogY ' className='logarithm' onClick={(e) => getNum(e , context)}>
                             log<sub>x</sub>y
                         </button>
                         <button 
                             value=' pi '
-                            onClick={getNum} >
+                            onClick={(e) => getNum(e , context)} >
                             <img src={piIcon} alt="" />
                         </button>
                         <button 
                             value=' square-root ' 
-                            onClick={getNum} 
+                            onClick={(e) => getNum(e , context)} 
                             className='root'>
                             <img src={squareRoot} alt="" />
                         </button>
                         <button 
                             value=' anonymous-root ' 
-                            onClick={getNum} 
+                            onClick={(e) => getNum(e , context)} 
                             className='root with-y-number'>
                             <img src={squareRoot} alt="" />
                         </button>
-                        <button>(-)</button>
-                        <button value=' sin ' onClick={getNum} >sin</button>
-                        <button value=' cos ' onClick={getNum} >cos</button>
-                        <button value=' tan ' onClick={getNum} >tan</button>
-                        <button value=' ln ' onClick={getNum}>ln</button>
+                        <button value=' ln ' onClick={(e) => getNum(e , context)}>ln</button>
+                        <button value=' sin ' onClick={(e) => getNum(e , context)} >sin</button>
+                        <button value=' cos ' onClick={(e) => getNum(e , context)} >cos</button>
+                        <button value=' tan ' onClick={(e) => getNum(e , context)} >tan</button>
+                        <button value='(-)' onClick={(e) => getNum(e , context)} >(-)</button>
+
+
+                        <button onClick={() => checkBrackets(context.operation_content)}>=</button>
+
 
                     </div>
 
                     {/* numbers and deletion*/}
                     <div className="numbers">
-                        <button value='7' onClick={getNum}>7</button>
-                        <button value='8' onClick={getNum}>8</button>
-                        <button value='9' onClick={getNum}>9</button>
-                        <button value = '(' onClick={getNum}>(</button>
-                        <button value = ')' onClick={getNum}>)</button>
-                        <button value='4' onClick={getNum}>4</button>
-                        <button value='5' onClick={getNum}>5</button>
-                        <button value='6' onClick={getNum}>6</button>
-                        <button value=' multiplication ' onClick={getNum}>
+                        <button value='7' onClick={(e) => getNum(e , context)}>7</button>
+                        <button value='8' onClick={(e) => getNum(e , context)}>8</button>
+                        <button value='9' onClick={(e) => getNum(e , context)}>9</button>
+                        <button value = '(' onClick={(e) => getNum(e , context)}>(</button>
+                        <button value = ')' onClick={(e) => getNum(e , context)}>)</button>
+                        <button value='4' onClick={(e) => getNum(e , context)}>4</button>
+                        <button value='5' onClick={(e) => getNum(e , context)}>5</button>
+                        <button value='6' onClick={(e) => getNum(e , context)}>6</button>
+                        <button value=' multiplication ' onClick={(e) => getNum(e , context)}>
                             <i className="fa-solid fa-x"></i>
                         </button>
-                        <button value=' divition ' onClick={getNum}>
+                        <button value=' divition ' onClick={(e) => getNum(e , context)}>
                             <i className="bold fa-solid fa-divide"></i>
                         </button>
-                        <button value='1' onClick={getNum}>1</button>
-                        <button value='2' onClick={getNum}>2</button>
-                        <button value='3' onClick={getNum}>3</button>
-                        <button value=' plus ' onClick={getNum}>
+                        <button value='1' onClick={(e) => getNum(e , context)}>1</button>
+                        <button value='2' onClick={(e) => getNum(e , context)}>2</button>
+                        <button value='3' onClick={(e) => getNum(e , context)}>3</button>
+                        <button value=' plus ' onClick={(e) => getNum(e , context)}>
                             <i className="fa-solid fa-plus"></i>
                         </button>
-                        <button value=' minus ' onClick={getNum}>
+                        <button value=' minus ' onClick={(e) => getNum(e , context)}>
                             <i className=" bold fa-solid fa-minus"></i>
                         </button>
-                        <button value='0' onClick={getNum}>0</button>
-                        <button value='.' onClick={getNum}>.</button>
-                        <button onClick={deleteOne} className='delete'>
-                            <i className="bold fa-solid fa-delete-left"></i>
-                        </button>
-                        <button onClick={deleteAll} className='delete'>
+                        <button value='0' onClick={(e) => getNum(e , context)}>0</button>
+                        <button value='.' onClick={(e) => getNum(e , context)}>.</button>
+                        <button onClick={() => deleteAllEles(context)} className='deleteAll'>
                             AC
                         </button>
-                        <button onClick={() => checkBrackets(operation_content)}>=</button>
+                        <button onClick={() => deleteOneEle(context)} className='deleteOne'>
+                            <i className="bold fa-solid fa-delete-left"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -518,4 +204,4 @@ export default function Calc() {
     )
 }
 
-// 520
+// 856

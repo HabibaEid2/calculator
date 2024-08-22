@@ -1,4 +1,7 @@
 /* components */
+span {
+    display: block;
+}
 .calculator button {
     font-size: inherit;
     font-family: inherit;
@@ -68,6 +71,9 @@
     animation-timing-function: ease-in;
     -moz-animation-timing-function: ease-in;
 }
+.calculator .display .summitionValue +  .index {
+    margin-top: 6px;
+}
 .calculator .display .index.indexAfterPower {
     height: 13px;
     margin-top: -5px;
@@ -123,7 +129,6 @@
     font-size: 12px;
     font-weight: bold;
 }
-
 /* operations in display */
 .calculator .xPowerY-display {
     width: 30px;
@@ -138,7 +143,7 @@
     width: 11px;
     height: 13px;
     border: solid 1px;
-    margin: -4px 2px;
+    margin: -4px 7px -4px 2px;
     font-size: 13px;
 }
 .calculator  .yValue {
@@ -155,6 +160,78 @@
     position: absolute;
     top: -4px;
     right: -9px;
+}
+.calculator .display-factorial + .separate ,
+.calculator .display-factorial + .index + .separate , 
+.calculator .power_1 + .separate ,
+.calculator .power_1 + .index + .separate   
+{
+    width: 10px;
+}
+.calculator .power_1 {
+    position: relative;
+}
+.calculator .power_1::after {
+    content: '-1';
+    position: absolute;
+    top: -11px;
+    right: -13px;
+    font-size: 13px;
+}
+.calculator .display-square-root {
+    margin-top: -2px;
+    margin-left: -13px;
+    margin-right: -6px;
+}
+.calculator .rootValue {
+    position: relative;
+}
+.calculator .power + .rootValue::after  , .calculator .power + .index + .rootValue::after {
+    position: absolute;
+    top: -5px;
+    left: -16px;
+    content: "";
+    background-image: url(/src/assets/display-square-root.png);
+    background-repeat: no-repeat;
+    width: 27px;
+    height: 100px;
+    background-size: contain;
+}
+.calculator .power.down {
+    margin: 28px 1px -10px 0px ; 
+}
+.calculator .display .index.logBase {
+    height: 13px;
+    margin-top: 28px;
+}
+.calculator .summition-display-img {
+    margin-top: 8px;
+    width: 23px;
+    position: relative;
+}
+.calculator .summitionValue {
+    margin-left: -10px;
+    margin-top: 7px;
+}
+.calculator .display .power.summition-top {
+    margin-top: -7px;
+    margin-right: -21px;
+    margin-left: 4px;
+}
+.calculator .display .power.summition-down {
+    margin: 30px 3px -24px 0px;
+    position: relative;
+}
+.calculator  .power.summition-down::after {
+    content: 'x=';
+    position: absolute;
+    bottom: -4px;
+    left: -20px;
+    font-size: 14px;
+}
+/* delete */
+.calculator .deleteOne {
+    grid-column: 4 / 6;
 }
 /* animations */
 @keyframes flutter {
