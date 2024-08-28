@@ -2,6 +2,9 @@
 span {
     display: block;
 }
+i {
+    font-size: inherit !important;
+}
 .calculator button {
     font-size: inherit;
     font-family: inherit;
@@ -183,13 +186,14 @@ span {
     margin-left: -13px;
     margin-right: -6px;
 }
-.calculator .rootValue {
+.calculator .rootValue:first {
     position: relative;
 }
-.calculator .power + .rootValue::after  , .calculator .power + .index + .rootValue::after {
+.calculator .rootValue::after 
+{
     position: absolute;
-    top: -5px;
-    left: -16px;
+    top: 8px;
+    left: 16px;
     content: "";
     background-image: url(/src/assets/display-square-root.png);
     background-repeat: no-repeat;

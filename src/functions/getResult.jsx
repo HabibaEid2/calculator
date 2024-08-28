@@ -3,6 +3,7 @@ export default function getResult(problem) {
     let result ; 
 
     for(let i = 0 ; i < problem.length ; i++) {
+
         if (i === 0 && !isNaN(problem[i])) {
             result = +problem[0] ; 
         }
@@ -24,7 +25,7 @@ export default function getResult(problem) {
                     result = Math.pow(result , problem[i + 1])
                     break ;
                 case 'factorial' : 
-                    result = +problem[i + 1]; 
+                    result = +problem[i - 1]; 
                     for(let i = result-1 ; i >= 1 ; i--) {
                         result *= i ; 
                     }
@@ -33,7 +34,7 @@ export default function getResult(problem) {
                     result = Math.pow(10 , +problem[i + 1]) ; 
                     break ; 
                 case 'xPowerN1' : 
-                    result = Math.pow(+problem[i + 1] , -1) ; 
+                    result = Math.pow(+problem[i - 1] , -1) ; 
                     break ; 
                 case 'square-root' : 
                     result = Math.sqrt(+problem[i + 1]) ; 
@@ -68,5 +69,6 @@ export default function getResult(problem) {
         }
     }
 
-    return result ; 
+    
+    return ` ${result} ` ; 
 }

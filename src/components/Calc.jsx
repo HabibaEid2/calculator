@@ -1,27 +1,30 @@
 import './calc.css'
 import piIcon from './../assets/pi.png'
 import squareRoot from './../assets/square-root.png'
-import { useContext, useRef  } from 'react';
+import { useContext, useEffect, useRef, useState  } from 'react';
 import { data } from '../context/Context';
 import getNum from '../functions/getNum';
 import deleteOneEle from '../functions/deleteOneEle';
 import arrangeOperations from '../functions/arrangeOperations';
-import deleteAll from '../functions/deleteAllEles';
 import deleteAllEles from '../functions/deleteAllEles';
 
 export default function Calc() {
     const displayRef = useRef() ; 
     const context = useContext(data) ; 
+    const [displayInScreen , setDisplayInScreen] = useState(null) ; 
     const indexNumber = context.displayOperations?.findIndex(ele => ele?.props?.value === 'index') ; 
 
+    
     // check operation contain brackets or not and excute it first
     function checkBrackets(value) {
+
         let getBrackets = value.match(/[(][^\[^()\]]*[)]/ig) || [] ; 
+
         for(let i of getBrackets) {
-            value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1)) , context) ; 
+            value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1) , context)) ; 
         }
-        if(value.includes('(')) checkBrackets(string) ; 
-        else arrangeOperations(value , context)
+        if(value.includes('(') && !isNaN(value[value.indexOf('(') + 1])) checkBrackets(value) ; 
+        else arrangeOperations(value , context) ; 
     }
 
     function goLeft() {
@@ -61,32 +64,41 @@ export default function Calc() {
         })
     }
 
-    if (
-        context.displayOperations[indexNumber -1]?.props.className?.includes('power ') &&
-        !context.displayOperations[indexNumber]?.props.className.includes('modify')
-    ) {
+    useEffect(() => {
+        if (
+            context.displayOperations[indexNumber -1]?.props.className?.includes('power ') &&
+            !context.displayOperations[indexNumber]?.props.className.includes('modify')
+        ) {
 
-        if (context.displayOperations[indexNumber -1]?.props.className?.includes('down')) {
-            context.setDisplayOperations(prev => {
-                prev.splice(indexNumber , 1 , <div value = "index" className='index modify logBase'></div>) ; 
+            console.log('yes one')
+            if (context.displayOperations[indexNumber -1]?.props.className?.includes('down')) {
+                context.setDisplayOperations(prev => {
+                    prev.splice(indexNumber , 1 , <div value = "index" className='index modify logBase'></div>) ; 
+                    return prev ; 
+                })
+            }
+    
+            else context.setDisplayOperations(prev => {
+                prev.splice(indexNumber , 1 , <div value = "index" className='index modify indexAfterPower'></div>) ; 
+
                 return prev ; 
             })
         }
+        else if (
+            !context.displayOperations[indexNumber -1]?.props.className?.includes('power') &&
+            context.displayOperations[indexNumber]?.props.className !== 'index'
+        )  {
+            console.log('yes two')
+            context.setDisplayOperations(prev => {
+                prev.splice(indexNumber , 1 , <div value = "index" className='index'></div>) ; 
+                return prev ; 
+            })
+        }
+        
 
-        else context.setDisplayOperations(prev => {
-            prev.splice(indexNumber , 1 , <div value = "index" className='index modify indexAfterPower'></div>) ; 
-            return prev ; 
-        })
-    }
-    else if (
-        !context.displayOperations[indexNumber -1]?.props.className?.includes('power') &&
-        context.displayOperations[indexNumber]?.props.className !== 'index'
-    )  {
-        context.setDisplayOperations(prev => {
-            prev.splice(indexNumber , 1 , <div value = "index" className='index'></div>) ; 
-            return prev ; 
-        })
-    }
+        setDisplayInScreen(context.displayOperations)
+    } , [context]) ; 
+
 
     return (
         <div className="calculator">
@@ -94,7 +106,7 @@ export default function Calc() {
 
                 <div className="display">
                     <div ref={displayRef} className="display-operations">
-                        {context.displayOperations}
+                        {displayInScreen}
                     </div>
                     <div className="result"> {context.result} = </div>
                 </div>

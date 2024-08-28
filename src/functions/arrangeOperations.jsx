@@ -2,85 +2,51 @@ import getResult from "./getResult";
 
 // to arrange operations ( * | / ) from left and right and then ( + | - ) from left and right
 export default function arrangeOperations (string , context) {
-        
+
+    let operationName ; 
     // to remove brackets from values like (9 + 2) or (18)
     if (string.includes('(')) string.replace('(' , '') ; 
     if (string.includes(')')) string.replace(')' , '') ; 
 
-    const arr = string.split(' ').filter(ele => ele !== '') ;
+    let arr = string.split(' ').filter(ele => ele !== '') ;
 
     let index ;
     let slice ; 
     let result ;
 
-    if (arr.includes('xPowerY') ) {
-        index = arr.indexOf('xPowerY')
+    if (arr.includes('xPowerY') || arr.includes('anonymous-root') || arr.includes('xLogY')) {
+        operationName = arr.filter(
+            ele => ele === 'xPowerY' || ele ==='anonymous-root' || ele === 'xLogY'
+        )[0] ; 
+
+        index = arr.indexOf(operationName) ; 
         slice = arr.slice(index - 1 , index + 2)
         result = getResult(slice) ; 
 
         // toggle the operation with its result
         return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
     }
-    else if (arr.includes('factorial')) {
-        index = arr.indexOf('factorial')
-        slice = arr.slice(index , index + 2)
-        result = getResult(slice) ; 
-
-        // toggle the operation with its result
-        return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
-    }
-    else if (arr.includes('tenPower')) {
-        index = arr.indexOf('tenPower')
-        slice = arr.slice(index , index + 2)
-        result = getResult(slice) ; 
-
-        // toggle the operation with its result
-        return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
-    }
-    else if (arr.includes('xPowerN1')) {
-        index = arr.indexOf('xPowerN1')
-        slice = arr.slice(index , index + 2)
-        result = getResult(slice) ; 
-
-        // toggle the operation with its result
-        return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
-    }
-    else if (arr.includes('square-root')) {
-        index = arr.indexOf('square-root')
-        slice = arr.slice(index , index + 2)
-        result = getResult(slice) ; 
-
-        // toggle the operation with its result
-        return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
-    }
-    else if (arr.includes('anonymous-root')) {
-        index = arr.indexOf('anonymous-root')
-        slice = arr.slice(index-1 , index + 2)
-        result = getResult(slice) ; 
-
-        // toggle the operation with its result
-        return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
-    }
     else if (
+        arr.includes('tenPower')  || arr.includes('square-root') ||
         arr.includes('sin') || arr.includes('cos') || arr.includes('tan') ||
         arr.includes('ln') || arr.includes('log')
     ) {
-        const theValue = arr.includes('sin') ? 'sin' : arr.includes('cos') ? 'cos' : arr.includes('tan') ? 'tan' : 
-                        arr.includes('ln') ?  'ln' : 'log' ; 
+        operationName = arr.filter(
+            ele =>  ele === 'tenPower' || ele === 'square-root' ||
+            ele === 'sin' || ele === 'cos' || ele === 'tan' || 
+            ele === 'ln' || ele === 'log'
+        )[0] ; 
 
-        index = arr.indexOf(theValue)
+        index = arr.indexOf(operationName)
         slice = arr.slice(index , index + 2)
         result = getResult(slice) ; 
-
-        // toggle the operation with its result
         return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
     }
-    else if (arr.includes('xLogY')) {
-        index = arr.indexOf('xLogY')
-        slice = arr.slice(index-1 , index + 2)
+    else if (arr.includes('factorial') || arr.includes('xPowerN1')) {
+        index = arr.indexOf('xPowerN1') || arr.indexOf('factorial') ; 
+        slice = arr.slice(index -1, index + 1) ; 
         result = getResult(slice) ; 
 
-        // toggle the operation with its result
         return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
     }
     else if (arr.includes('multiplication') || arr.includes('divition')) {
@@ -119,3 +85,5 @@ export default function arrangeOperations (string , context) {
         return string ; 
     }
 }
+
+// 127

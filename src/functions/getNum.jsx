@@ -1,130 +1,33 @@
-// display operations on screen
+import showInScreen from "./showInScreen";
 
 export default function getNum(e , context) {
 
     // get index of index element in screen
     const indexNumber = context.displayOperations?.findIndex(ele => ele?.props?.value === 'index') ; 
-    
-    let value = [] ; 
-    switch(e.target.value) {
-        case ' plus ' :
-            value.push(<span>+</span>)
-            break ; 
-        case ' minus ' : 
-            value.push(<span>-</span>)
-            break ; 
-        case ' multiplication ' : 
-            value.push(
-                <div>
-                    <i className="fa-solid fa-x"></i>
-                </div>
-            )
-            break ; 
-        case ' divition ' : 
-            value.push(
-                <div>
-                    <i className="bold fa-solid fa-divide"></i>
-                </div>
-            )
-            break ;
-        case ' xPowerY ' : 
-            value.push( 
-                <div className="xElement"></div> ,
-                <div className="power yElement"></div> ,
-                <div className='separate'></div> 
-            )
-            break ; 
-        case ' factorial ' : 
-            value.push( 
-            <div className='xElement display-factorial'></div> , 
-            <div className='separate'></div>) 
-            break ; 
-        case ' tenPower ' : 
-            value.push(
-                <span>10</span> , 
-                <span className='power yElement'></span> , 
-                <div className='separate'></div>
-            )
-            break ;
-        case ' xPowerN1 ' : 
-            value.push(
-            <div className="xElement power_1"></div> ,
-            <div className='separate'></div> 
-            )
-            break ; 
-        case ' square-root ' : 
-            value.push(
-            
-            <div className="xElement rootValue"></div> , 
-            <div className='separate'></div>
-            )
-            break ;
-        case ' anonymous-root ' : 
-            value.push( 
-            <div className="power yElement exponent"></div> , 
-            // <img className='display-square-root' src={displayRootImg} alt=''/> , 
-            <span className="xElement rootValue"></span> ,
-            <div className="separate"></div>
-        )
-            break ; 
-        case ' pi ' : 
-            value.push(
-                <div>
-                    <img src={piIcon} alt="" />
-                </div>
-            )
-            break ; 
-        case ' sin ' :
-            value.push( <span className='sin'>sin(</span> ) 
-            break ;
-        case ' cos ' :
-            value.push( <span className='cos'>cos(</span> ) 
-            break ; 
-        case ' tan ' :
-            value.push( <span className='tan'>tan(</span> ) 
-            break ;
-        case ' ln ' :
-            value.push( <span className='tan'>ln(</span> ) 
-            break ; 
-        case ' log ' :
-            value.push( <span className='tan'>log(</span> ) 
-            break ;
-        case ' xLogY ' : 
-            value.push(
-                <span>log(</span> , 
-                <span className='power yElement down'></span> , 
-                <span className='xElement logValue'></span> , 
-                <span>)</span>
-            )
-            break ; 
-        default :
-            value.push(<span>{e.target.value.trim()}</span>) 
-            break ;
-    }
+    let value = showInScreen(e) ; 
     context.setDisplayOperations(prev => {
 
         let arr = prev.slice(0 , indexNumber) ;
-        
-        let lastEleClass = arr[arr.length -1]?.props?.className
+        let lastEleClass = arr[arr.length -1]?.props?.className ;  
+        let theClass ; 
         
         if (lastEleClass?.includes('xElement')) {
-            if (lastEleClass?.includes('display-factorial')) {
-                arr[arr.length -1] =  <div className='display-factorial'>{e.target.value}</div> ; 
-            }
-            else if (lastEleClass?.includes('power_1')) {
-                arr[arr.length -1] =  <div className='power_1'>{e.target.value}</div> ; 
-            }
-            else if(lastEleClass?.includes('rootValue')) {
-                arr[arr.length -1] =  <span className='rootValue'>{e.target.value}</span> ; 
-            }
-            else if (lastEleClass?.includes('logValue')) {
-                arr[arr.length -1] =  <span className='logValue'>{e.target.value}</span> ; 
-            }
-            else arr[arr.length -1] =  <span className='xValue'>{e.target.value}</span> ; 
+            theClass = lastEleClass?.includes('display-factorial') ?  'display-factorial' : 
+                        lastEleClass?.includes('power_1') ?  'power_1' :
+                        lastEleClass?.includes('rootValue') ?  'rootValue' :
+                        lastEleClass?.includes('logValue') ?  'logValue' : 'xValue'
+
+            arr[arr.length -1] =  <div className= { theClass }> {e.target.value}</div> ; 
         }
+        else if(lastEleClass?.includes('logValue')) {
+            arr.push(<span className="logValue">{value[0]?.props?.children}</span>)
+        }
+
         else if (lastEleClass?.includes('xValue')) {
-            // arr.push(<span className='xValue'>{e.target.value}</span>) ; 
-            arr.push(value[value.length -1]) ; 
+            arr.splice(
+                arr.length -1 , 1 , <span>{arr[arr.length -1]?.props?.children}</span> ,
+                <span className="xValue">{value[0]?.props?.children}</span>
+            )
         }
         else if (lastEleClass?.includes('yElement')) {
             if(lastEleClass?.includes('exponent')) {
@@ -133,11 +36,11 @@ export default function getNum(e , context) {
             else if (lastEleClass?.includes('down')) {
                 arr[arr.length -1] = <span className='power yValue down'>{e.target.value}</span> ;
             }
-            else arr[arr.length -1] = <span className='power yValue'>{arr[arr.length -1]?.props?.children}</span> ; 
+            else arr[arr.length -1] = <span className='power yValue'>{value[0]}</span> ; 
         }
         else if (lastEleClass?.includes('yValue')) {
-            if (lastEleClass?.includes('down')) arr.push(<span className='power yValue down'>{e.target.value}</span>) ; 
-            else arr.push(<span className='power yValue'>{e.target.value}</span>) ; 
+            if (lastEleClass?.includes('down')) arr.push(<div className='power yValue down'>{value[0]?.props?.children}</div>) ; 
+            else arr.push(<span className='power yValue'>{value[value.length -1]?.props?.children}</span>) ; 
         }
         else if (lastEleClass?.includes('display-factorial')) {
 
@@ -145,19 +48,17 @@ export default function getNum(e , context) {
             const prevEle = arr[arr.length -1]?.props?.children ; 
             arr.splice(arr.length -1 , 1 ,[
                 <span>{prevEle}</span> , 
-                <div className='display-factorial'>{e.target.value}</div>
+                <div className='display-factorial'>{value[value.length -1]?.props?.children}</div>
             ])
         }
         else if (lastEleClass?.includes('rootValue')) {
-            arr.push(<span className='rootValue'>{e.target.value}</span>)
+            arr.push(<span className="rootValue">{value[0]?.props?.children}</span>)
         }
         else if (lastEleClass?.includes('power_1')) {
-
-            // to put the exclamation icon after the last number of factorial
             const prevEle = arr[arr.length -1]?.props?.children ; 
             arr.splice(arr.length -1 , 1 ,[
                 <span>{prevEle}</span> , 
-                <div className='power_1'>{e.target.value}</div>
+                <div className='power_1'>{value[0]?.props?.children}</div>
             ])
         }
         else if (
@@ -171,7 +72,7 @@ export default function getNum(e , context) {
             arr.push(
             <span>{e.target.value}</span> , 
             <span>)</span>
-        )
+            )
         }
         else arr.push(value) ;
         
@@ -186,71 +87,116 @@ export default function getNum(e , context) {
             else return ele ; 
         }).flat() 
 
-        const value = context.displayOperations[indexNumber -1]?.props ; 
-
-        if (
-            arr.includes('xPowerY') || arr.includes('factorial') ||
-            arr.includes('xPowerN1') || arr.includes('square-root') || 
-            arr.includes('anonymous-root') || arr.includes('xLogY')
+        const value = context.displayOperations[indexNumber -1]?.props ;
+        
+        if(e.target.value === ' square-root ' || e.target.value === ' tenPower ') {
+            arr.splice(indexNumber ,0 , `${e.target.value.trimEnd()}(`) ; 
+        }
+        else if (
+            arr.includes('xPowerY')  ||  arr.includes('square-root(') || 
+            arr.includes('anonymous-root') || arr.includes('xLogY') || arr.includes('tenPower(')
         ) {
-
-            if(value?.className?.includes('display-factorial') || arr.includes('xPowerN1') || arr.includes('square-root')) {
-                arr.splice(indexNumber + 1 , 0 , e.target.value) ; 
+            if(arr.includes('square-root(')) {
+                if ( arr[indexNumber -1] === 'square-root(' && isNaN(arr[indexNumber]))
+                {
+                    arr.splice(indexNumber ,0 , e.target.value , ')') ; 
+                }
+                else {
+                    const indexOfTheOperation = arr.indexOf('square-root(') ; 
+                    arr.splice(indexOfTheOperation == indexNumber ? indexNumber  : indexNumber + 1,0 , e.target.value) ;
+                }
+            }
+            else if(arr.includes('tenPower(')) {
+                if ( 
+                    arr[indexNumber -2] === 'tenPower(' && isNaN(arr[indexNumber -1]) &&
+                    !context.displayOperations[indexNumber + 1]?.props?.className.includes('power')
+                )
+                {
+                    arr.splice(indexNumber -1 ,0 , e.target.value , ')') ; 
+                }
+                else if (arr[indexNumber -2] === 'tenPower(' && context.displayOperations[indexNumber + 1]?.props?.className.includes('power')){
+                    arr.splice(indexNumber -1 , 0 , e.target.value ) ; 
+                }
+                else arr.splice(indexNumber , 0 , e.target.value ) ; 
+                
             }
             else if (arr.includes('xPowerY') || arr.includes('anonymous-root') || arr.includes('xLogY')) {
+
                 const type = arr.includes('xPowerY') ? 'xPowerY' : arr.includes('anonymous-root') ? 'anonymous-root' : 'xLogY' ; 
-                const index = arr.filter(ele => ele !== '').findIndex(ele => ele === type) ; 
+                const operationIndex = arr.filter(ele => ele !== '').findIndex(ele => ele === type) ; 
 
 
                 if (value?.className?.includes('rootValue')) {
-                    if (isNaN(arr[index -1])) {
-                        arr.splice(indexNumber , 0 , e.target.value) ; 
-                    }
 
-                    else arr.splice(indexNumber + 1 , 0 , e.target.value) ; 
-                }
-                else if (value?.className?.includes('exponent')) {
-                    if(value?.className?.includes('yElement')) {
-                        arr.splice(index== 0? index : index - 1 , 0 , e.target.value) ; 
-                    }
-                    else if (value?.className?.includes('yValue')) {
-                        arr.splice(indexNumber - 1 ,0 , e.target.value) ; 
-                    }
-                }
-                else if (value?.className?.includes('logValue')) {
-                    if (isNaN(arr[index -1])) {
+                    if (isNaN(arr[operationIndex -1]) && arr[operationIndex -1] !== ')') {
                         if (value?.className.includes('xElement')) {
-                            arr.splice(indexNumber - 2 ,0 , e.target.value) ; 
+                            arr.splice(operationIndex + 1 ,0 ,'(' , e.target.value , ')') ; 
                         }
-                        else {
-                            arr.splice(indexNumber - 1 ,0 , e.target.value) ; 
-                        }
+                        else arr.splice(indexNumber + 1  ,0 ,  e.target.value ) ;
                     }
                     else {
                         if (value?.className.includes('xElement')) {
-                            arr.splice(indexNumber - 1 ,0 , e.target.value) ; 
+                            arr.splice(indexNumber + 2  ,0 ,'(' , e.target.value , ')') ; 
                         }
-                        else {
-                            arr.splice(indexNumber ,0 , e.target.value) ; 
+                        else arr.splice(indexNumber + 4 ,0 , e.target.value) ;
+                    }
+                }
+                else if (value?.className?.includes('exponent')) {
+                    if(value?.className?.includes('yElement')) {
+                        arr.splice(operationIndex== 0? operationIndex : operationIndex - 1 , 0 , '(',e.target.value , ')') ; 
+                    }
+                    else if (value?.className?.includes('yValue')) {
+                        arr.splice(operationIndex - 1 ,0 , e.target.value) ; 
+                    }
+                }
+                else if (value?.className?.includes('logValue')) {
+                    if (isNaN(arr[operationIndex -1]) && arr[operationIndex -1] !== ')') {
+                        if (value?.className.includes('xElement')) {
+                            arr.splice(operationIndex + 1 ,0 ,'(' , e.target.value , ')') ; 
                         }
+                        else arr.splice(indexNumber  ,0 ,  e.target.value ) ;
+                    }
+                    else {
+                        if (value?.className.includes('xElement')) {
+                            arr.splice(indexNumber + 2  ,0 ,'(' , e.target.value , ')') ; 
+                        }
+                        else arr.splice(indexNumber + 3 ,0 , e.target.value) ;
                     }
                 }
                 else if (value?.className?.includes('down')) {
-                    arr.splice(index , 0 , e.target.value) ; 
+                    if (value?.className?.includes('yElement') && arr[arr.indexOf('xLogY') -1] !== ')') {
+                        arr.splice(operationIndex , 0 , '(' , e.target.value , ')') ; 
+                    }
+                    else arr.splice(operationIndex -1 , 0 , e.target.value) ; 
                 }
                 else if (value?.className?.includes('xElement')) {
-                    arr.splice(index , 0 , e.target.value) ; 
+                    arr.splice(operationIndex , 0 , e.target.value) ; 
                 }
 
                 else if(value?.className?.includes('yElement')) {
-                    arr.splice(index + 1 , 0 , e.target.value) ; 
+                    if (context.displayOperations[indexNumber + 1]?.props?.className.includes('power') || arr[index + 2] === ')') {
+                        arr.splice(operationIndex + 2 , 0 , e.target.value ) ; 
+                    }
+                    else {
+                        arr.splice(operationIndex + 2 , 0 ,  '(',e.target.value ,')') ; 
+                    }
                 }
                 else if (value?.className?.includes('yValue')) {
-                    arr.splice(indexNumber + 1 ,0 , e.target.value) ; 
+                    arr.splice(
+                        (isNaN(arr[operationIndex - 1]) || operationIndex === 0) ?
+                        indexNumber + 1 : indexNumber + 2 ,0 , e.target.value
+                    ) ; 
                 }
-                else arr.splice(indexNumber ,0 , e.target.value) ; 
+                else  {
+                    let newPlace = type === 'anonymous-root' ? indexNumber + 4 : indexNumber + 2 ; 
+                    arr.splice(operationIndex >= indexNumber ? indexNumber  : newPlace , 0 , e.target.value) ; 
+                }
             }
             else arr.splice(indexNumber ,0 , e.target.value) ; 
+        }
+        else if(arr.includes('factorial') || arr.includes('xPowerN1') ) {
+            let index = arr.indexOf('xPowerN1') || arr.indexOf('factorial') ; 
+            arr.splice(isNaN(arr[index -1] && indexNumber > 0) ? indexNumber -1 : indexNumber , 0 , e.target.value)
         }
         else if (
             e.target.value === ' sin ' || e.target.value === ' cos ' || e.target.value === ' tan ' ||
@@ -286,3 +232,7 @@ export default function getNum(e , context) {
         return arr.join('') ; 
     })
 }
+
+// 234
+
+// 288
