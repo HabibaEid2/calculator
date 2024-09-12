@@ -2,272 +2,191 @@ export default function deleteOneEle(context) {
     
     const indexNumber = context.displayOperations?.findIndex(ele => ele?.props?.value === 'index') ; 
     let prevEle = context.displayOperations[indexNumber -1]?.props?.className ; 
-
-    // context.setOperation_content(prev => {
-    //     let arr = 
-    //     prev.split(' ')
-    //     .map(ele => (!(isNaN(+ele)) && ele.length > 1) ? ele.split('') : ele !== '' ? ele : undefined)
-    //     .filter(ele => ele !== undefined).flat() ; 
-
-    //     let prevEle = context.displayOperations[indexNumber -1]?.props?.className ; 
-    //     if (
-    //         prevEle?.includes('yElement') && context.displayOperations[indexNumber +1]?.props?.className?.includes('power')  &&
-    //         !(context.displayOperations[indexNumber +1]?.props?.className?.includes('rootValue')) 
-    //     ) arr = arr ; 
-    //     else if (
-    //         prevEle?.includes('xElement') || 
-    //         (prevEle?.includes('yElement') && context.displayOperations[indexNumber +1]?.props?.className?.includes('separate'))
-    //     ) {
-
-    //         let secondeBracketIndex = 0 ; 
-    //         for(let i = arr.indexOf('xPowerY') ; i < arr.length ; i++ ) {
-    //             if (arr[i] === ')') {
-    //                 secondeBracketIndex = i ; 
-    //                 break ; 
-    //             }
-    //         }
-
-    //         arr = arr.filter((ele , index) => index < arr.indexOf('xPowerY') || index > secondeBracketIndex) ; 
-    //     }
-
-    //     else if (prevEle?.includes('power') && !(context.displayOperations[indexNumber +1]?.props?.className?.includes('rootValue'))) {
-    //         let checkPrevValue = false ;
-    //         for(let i = indexNumber -1 ; i >= 0 ; i--) {
-    //             if (
-    //                 context.displayOperations[i]?.props?.className?.includes('yValue') &&
-    //                 context.displayOperations[i -1]?.props?.className?.includes('xValue') 
-    //             ) {
-    //                 checkPrevValue = true ; 
-    //                 break ; 
-    //             } 
-    //         }
-    //         arr = arr.filter((ele , index) => index !== (checkPrevValue ? indexNumber + 1 : indexNumber) )
-    //     }
-
-    //     else if ( 
-    //         prevEle?.includes('display-factorial') ||
-    //         prevEle?.includes('power_1')
-    //     ) {
-
-    //         let checkPrevValue = false ;
-    //         for(let i = indexNumber -1 ; i >= 0 ; i--) {
-    //             if (
-    //                 context.displayOperations[i]?.props?.className?.includes('yValue') &&
-    //                 context.displayOperations[i -1]?.props?.className?.includes('xValue') 
-    //             ) {
-    //                 checkPrevValue = true ; 
-    //                 break ; 
-    //             } 
-    //         }
-    //         if (prevEle?.includes('display-factorial') || prevEle?.includes('power_1')) checkPrevValue = true ; 
-
-    //         if (checkPrevValue) arr = arr.filter((ele , index) => index !== indexNumber) ; 
-    //         else arr = arr.filter((ele , index) => index !== indexNumber -1) ; 
-
-    //     } 
+    const xElementCount = context.displayOperations.slice(0 , indexNumber)
+        .filter(ele => ele.props?.className?.includes('xElement') || ele.props?.className?.includes('yElement') ).length ;
         
-    //     // anonymous root
-    //     else if (prevEle?.includes('power') || prevEle?.includes('rootValue')) {
+    const separateCount = context.displayOperations.slice(0 , indexNumber)
+        .filter(ele => ele.props?.className?.includes('separate')).length ;
 
-    //         if (prevEle?.includes('power')) {
-    //             arr = arr.filter((ele , index) => index != indexNumber - 1) ; 
-    //         }
-    //         else {
-    //             let checkPrevValue = false ;
-    //             for(let i = indexNumber -1 ; i >= 0 ; i--) {
-    //                 if (
-    //                     context.displayOperations[i]?.props?.className?.includes('rootValue') &&
-    //                     context.displayOperations[i -1]?.props?.className?.includes('yValue') 
-    //                 ) {
-    //                     checkPrevValue = true ; 
-    //                     break ; 
-    //                 } 
-    //             }
+    // Example : log ( 6 )
+    const operationBracket = context.displayOperations.slice(0 , indexNumber)
+        .filter(ele => ele.props?.className?.includes('closingOperation')).length ;
 
-    //             if (checkPrevValue) arr = arr.filter((ele , index) => index !== indexNumber) ; 
-    //             else arr = arr.filter((ele , index) => index !== indexNumber -1) ; 
-    //         }
+    let additionalCount = 0 ; 
+    if (
+        context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className === 'xElement').length > 0 ||
+        context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className === 'xValue').length > 0 
+    ) 
+        additionalCount += 3 ; 
 
-    //     }
-    //     else arr = arr.filter((ele , index) => index !== indexNumber -1)  ;
+    if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('rootValue')).length > 0) 
+        additionalCount += 3 ; 
 
-    //     return arr.join(' ')  ;
+    if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('anonymousR')).length > 0)
+        additionalCount += 5 ; 
 
-    // }) 
+    if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('logEle')).length > 0)
+        additionalCount += 4 ; 
 
-    // context.setDisplayOperations(prev => {
+    if ( context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('ten')).length > 0 )
+        additionalCount += 2 ;
+    
+    if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('bracketOperation')).length > 0)
+        additionalCount += 2 ; 
 
-    //     if (prev[indexNumber -1]?.props?.className?.includes('xElement')) {
-    //         let separateIndex ; 
-    //         for(let i = indexNumber -1 ; i < prev.length ; i++ ) {
-    //             if (prev[i]?.props?.className === 'separate') {
-    //                 separateIndex = i ; 
-    //                 break ; 
-    //             }
-    //         }
-    //         prev = prev.filter((ele , index) => index < indexNumber-1 || index > separateIndex) ; 
-    //     }
-    //     else if ( 
-    //         prev[indexNumber -1]?.props?.className?.includes('xValue') && 
-    //         !prev[indexNumber -2]?.props?.className?.includes('xValue')
-    //     ) {
+    if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('factorialEle')).length > 0)
+        additionalCount += 1 ;
 
-    //         prev = prev.map((ele , index) => {
-    //             if (index === indexNumber -1) {
-    //                 return <span className='xElement'></span>; 
-    //             }
-    //             else return ele ; 
-    //         })
-    //     }
-
-    //     else if (prev[indexNumber -1]?.props?.className?.includes('yElement')) {
-    //         const prevEleValue = prev[indexNumber -2]?.props?.children ; 
-    //         if(prevEleValue) {
-    //             prev.splice(indexNumber -2 , 2 , <span>{prevEleValue}</span> ) ; 
-    //         }
-    //         else { prev.splice(indexNumber -2 , 2)}
-    //     }
-    //     else if (
-    //         (
-    //             (prev[indexNumber -1]?.props?.className?.includes('yValue') &&
-    //             !prev[indexNumber -2]?.props?.className?.includes('yValue')) ||
-    //             prev[indexNumber -1]?.props?.className ==='separate'
-    //         )
-    //     ) {
-
-    //         prev = prev.map((ele , index) => {
-                
-    //             if (index === indexNumber -1) {
-    //                 if (prev[indexNumber + 1]?.props?.className?.includes('rootValue')) {
-    //                     return <span className='power yElement exponent'></span>; 
-    //                 }
-    //                 if (prev[indexNumber + 1]?.props?.className?.includes('logValue')) {
-    //                     return <span className='power yElement down'></span>; 
-    //                 }
-    //                 else return <span className='power yElement'></span>; 
-    //             }
-    //             else return ele ; 
-    //         })
-    //     }
-    //     else if (
-    //         (
-    //             prev[indexNumber -1]?.props?.className  ===  'display-factorial' ||
-    //             prev[indexNumber -1]?.props?.className  ===  'power_1'
-
-    //         )  &&
-    //         (isNaN(+prev[indexNumber -2]?.props?.children) || indexNumber === 1)
-    //     ) {
-            
-    //         let classIs = prev[indexNumber -1]?.props?.className ; 
-    //         prev = prev.map((ele , index) => {
-    //             if (index === indexNumber -1) {
-    //                 return <span className={`${classIs} xElement`}></span>;  
-    //             }
-    //             else return ele ; 
-    //         })
-    //     }
-
-    //     else if (
-    //         (
-    //             prev[indexNumber -1]?.props?.className  ===  'display-factorial' ||
-    //             prev[indexNumber -1]?.props?.className  ===  'power_1'
-
-    //         ) &&
-    //         (!isNaN(+prev[indexNumber -2]?.props?.children))
-    //     ) {
-    //         let classIs = prev[indexNumber -1]?.props?.className ;
-    //         prev = prev.map((ele , index) => {
-    //             if (index === indexNumber -1) {
-    //                 return ;
-    //             }
-    //             else if (index === indexNumber -2) {
-    //                 return <span className={`${classIs}`}>{ele?.props?.children}</span>
-    //             }
-    //             else return ele ; 
-    //         })
-    //     }
-    //     else if (
-    //         prev[indexNumber -1]?.props?.className === 'rootValue' && 
-    //         prev[indexNumber -2]?.props?.className !== 'rootValue'
-    //     ) {
-    //         prev = prev.map((ele , index) => {
-    //             if (index === indexNumber -1) {
-    //                 return <span className='xElement rootValue'></span>; 
-    //             }
-    //             else return ele ; 
-    //         })
-    //     }
-
-    //     else prev = prev.filter((ele , i) => i !== indexNumber -1) ; 
-
-        
-    //     return prev.filter(ele => ele !== undefined) ; 
-
-    // }) ; 
+    if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('xPowerNOne')).length > 0 )
+        additionalCount += 1 ; 
 
     context.setOperation_content(prev => {
-        let arr = 
-        prev.split(' ')
+        let arr = prev.split(' ')
         .map(ele => (!(isNaN(+ele)) && ele.length > 1) ? ele.split('') : ele !== '' ? ele : undefined)
         .filter(ele => ele !== undefined).flat() ; 
-
         let operationIndex ;
 
-        // xLogY
-
-        if (prevEle?.includes('yValue down')) {
-            arr = arr.filter((ele , index) => index !== (indexNumber -1)) ; 
+        // xLogY and anonymousR
+        if(
+            prevEle?.includes('xElement logEle') || prevEle?.includes('yElement logEle') ||
+            prevEle?.includes('xElement anonymousR') || prevEle?.includes('yElement anonymousR') ||
+            (context.displayOperations[indexNumber -1]?.props?.children === 'log(' &&
+            context.displayOperations[indexNumber + 1]?.props?.className?.includes('logEle'))
+        ) {
+            operationIndex = prevEle?.includes('anonymousR') ? arr.indexOf('anonymous-root') : arr.indexOf('xLogY') ; 
+            const closingBracket = arr.indexOf(')' , operationIndex) ; 
+            const openingBracket = arr.slice(0 , operationIndex).lastIndexOf('(') ; 
+            arr = arr.filter((ele , index) => !(index >= openingBracket && index <= closingBracket)) ; 
+        }
+        else if (prevEle?.includes('xValue logEle')) {
+            arr = arr.filter((ele , index) => 
+                index !== ((indexNumber - 1) + additionalCount - 1 - (separateCount + xElementCount + operationBracket))) ;
+        }
+        else if (prevEle?.includes('yValue logEle')) {
+            arr = arr.filter((ele , index) => 
+                index !== ((indexNumber - 1) + additionalCount - 4 - (separateCount + xElementCount + operationBracket))) ;
+        }
+        else if(prevEle?.includes('yValue anonymous')) {
+            arr = arr.filter((ele, index) => 
+                index !== ((indexNumber -1) + additionalCount - 4 - (separateCount + xElementCount + operationBracket)))
         }
 
-        else if(prevEle?.includes('yElement down')) {
-            operationIndex = arr.indexOf('xLogY') ; 
-            let bracketIndex = arr.indexOf(')' , operationIndex) ; 
+        // Ten Power and (sin , cos , tan , ln , log)
+        else if (prevEle?.includes('ten') || prevEle === 'bracketOperation') {
+            const equation = (indexNumber -1) + additionalCount - 2 - (xElementCount + separateCount + operationBracket) ;
+            const closingBracket = arr.indexOf(')' , equation) ; 
+            arr = arr.filter((ele , index) => !(index >= equation && index <= closingBracket))
+        }
+        else if (
+            prevEle?.includes('yValue powerTheTen') || prevEle?.includes('bracketOperationValue') ||
+            prevEle?.includes('xValue anonymous') || prevEle?.includes("xValue rootValue") ||
+            prevEle?.includes('yValue')
+        ) {
+            arr = arr.filter((ele , index) => 
+                index !== (indexNumber -1) + additionalCount -1 - (xElementCount + separateCount + operationBracket)) ; 
+        }
+        else if (prevEle?.includes('yElement powerTheTen')) {
+            operationIndex = arr.indexOf('tenPower') ;
+            arr = arr.filter((ele , index) => index !== operationIndex  && index !== operationIndex +1 && index !== operationIndex +2)
+        }
+
+        // Factorial and X Power -1
+        else if (
+            (prevEle?.includes('xValue factorialEle')  || prevEle?.includes('xValue xPowerNOne'))) {
+            const operation = prevEle?.includes('factorialEle') ? 'factorial' : 'xPowerNOne' ; 
+            operationIndex = arr.indexOf(operation) ; 
             if (arr[operationIndex -1] === ')') {
-                arr = arr.filter((ele , index) => index > operationIndex -2 && index < bracketIndex) ; 
+                const openingBracket = arr.slice(0 , operationIndex).lastIndexOf('(') ; 
+                arr = arr.filter((ele, index) => !(index >= openingBracket && index < operationIndex))
             }
-            else arr = arr.filter((ele , index) => index > operationIndex && index < bracketIndex) ; 
+            else arr = arr.filter((ele , index) => 
+                index !== ((indexNumber - 1) + additionalCount - 1 - (separateCount + xElementCount + operationBracket))); 
         }
 
-        // xPowerY
-        else if (prevEle?.includes('xValue')) {
-            operationIndex = arr.indexOf('xPowerY')
-            arr = arr.filter((ele ,index) => index !== operationIndex -1)
+        // Square Root
+        else if (prevEle?.includes('xElement rootValue')) {
+            operationIndex = arr.indexOf('square-root')
+            arr = arr.filter((ele, index) => index !== operationIndex && index !== operationIndex + 1 && index !== operationIndex + 2)
         }
-        else if (prevEle?.includes('xElement')) {
+
+        // X Power Y
+        else if (prevEle?.includes('xElement') && !prevEle?.includes('factorialEle') && !prevEle?.includes('xPowerNOne')) {
             operationIndex = arr.indexOf('xPowerY') ; 
-            let bracketIndex ; 
-            for(let i = 0 ; i < arr.length ; i++) {
-                if (arr[i] === ')') {
-                    bracketIndex = i ; 
-                    break ; 
-                }
-            }
-            
+            const bracketIndex = arr.indexOf(')' , operationIndex)
             arr = arr.filter((ele , index) => (index < operationIndex || index > bracketIndex))
         }
-        else if (prevEle?.includes('yValue')) {
-            operationIndex = arr.indexOf('xPowerY') ; 
-            if (operationIndex > 0) arr = arr.filter((ele , index) => index !== indexNumber + 1) ; 
-            else arr = arr.filter((ele , index) => index !== indexNumber) ; 
+        else if (prevEle?.includes('xValue') && !prevEle?.includes('factorialEle') && !prevEle?.includes('xPowerNOne')) {
+            arr = arr.filter((ele ,index) => 
+                index !== (indexNumber - 1) + additionalCount - 3 - (xElementCount + separateCount + operationBracket))
         }
         else if (prevEle?.includes('yElement')) {
             operationIndex = arr.indexOf('xPowerY') ; 
-            arr.splice(operationIndex , 3) ; 
-        }
+            let openingBracket ; 
+            let closingBracket ; 
+            if (arr[operationIndex -1] === ')') openingBracket = arr.slice(0 , operationIndex).lastIndexOf('(') ; 
+            if (arr[operationIndex + 1] === '(') closingBracket = arr.indexOf(')' , operationIndex) ; 
 
-        return arr.join(' ')  ;
+            arr = arr.filter((ele , index) => 
+                (openingBracket !== undefined && closingBracket !== undefined) ? !(index >= openingBracket && index <= closingBracket) : 
+                openingBracket ? !(index >= openingBracket && index <= operationIndex ) :
+                closingBracket ? !(index >= operationIndex && index <= closingBracket) : index !== operationIndex 
+            )
+        }
+        
+        // separate 
+        else if (prevEle?.includes('separate')) arr = arr ; 
+
+        // contain bracket
+        else if (
+            context.displayOperations[indexNumber -1]?.props?.children === ')' && 
+            context.displayOperations[indexNumber -2]?.props?.className?.includes('logEle')
+        ) {
+            operationIndex = arr.slice(0 , indexNumber).lastIndexOf('xLogY') ; 
+            const openingBracket = arr.slice(0 , operationIndex).lastIndexOf('(') ; 
+            const closingBracket = arr.indexOf(')' , operationIndex) ;  
+            arr = arr.filter((ele , index) => !(index >= openingBracket && index <= closingBracket))
+        }
+        else if (context.displayOperations[indexNumber -1]?.props?.children === ')' && prevEle?.includes('closingOperation')) {
+            const equation = (indexNumber -1) + additionalCount - (xElementCount + separateCount + operationBracket)
+            const operationIndex = arr.slice(0 , equation ).findLastIndex(ele => ele?.includes('(')) ; 
+            arr = arr.filter((ele , index) => !(index >= operationIndex -1 && index <= equation) )
+        }
+        else  arr = arr.filter((ele, index) => index !== (indexNumber -1) + additionalCount - (xElementCount + separateCount + operationBracket)) ;
+
+        arr = arr.join(' ').split('') ; 
+        arr = arr.filter((ele, index) =>  
+            !(ele === ' ' && !isNaN(arr[index - 1]) && !isNaN(arr[index + 1]))).join('')
+
+        return arr ;
     })
 
     context.setDisplayOperations(prev => {
 
         // xLogY
-        if (prevEle?.includes('yValue down')) {
+        if (prevEle?.includes('xValue logEle')) {
+            prev = prev.map((ele , index) => {
+                if (
+                    index === indexNumber -1 &&
+                    !prev[indexNumber -2]?.props?.className?.includes('xValue') &&
+                    !prev[indexNumber + 1]?.props?.className?.includes('xValue')
+                ) {
+                    return <span className="xElement logEle"></span>
+                }
+                else if (index !== indexNumber -1) return ele ; 
+            })
+        }
+        else if(prevEle?.includes('xElement logEle') || prevEle?.includes('yElement logEle')) {
+            const operation = prev.slice(0 , indexNumber).findLastIndex(ele => ele.props?.children === 'log(') ; 
+            const closingBracket = prev.findIndex(ele => ele.props?.children === ')' , indexNumber) ;
+            prev = prev.filter((ele , index) => !(index >= operation && index <= closingBracket) || index === indexNumber)
+        }
+        else if (prevEle?.includes('yValue logEle')) {
             if (
                 !prev[indexNumber + 1]?.props?.className?.includes('yValue') &&
                 !prev[indexNumber - 2 ]?.props?.className?.includes('yValue')
             ) {
                 prev = prev.map((ele , index) => {
-                    if (index === indexNumber -1) return <span className="power yElement down"></span> ; 
+                    if (index === indexNumber -1) return <span className="power yElement logEle"></span> ; 
                     else return ele ; 
                 }) 
             }
@@ -275,27 +194,138 @@ export default function deleteOneEle(context) {
                 prev = prev.filter((ele , index) => index !== indexNumber -1)
             }
         }
-        else if (prevEle?.includes('yElement down')) {
-            const bracketIndex = prev.findIndex(ele => ele.props?.children === ')') ;
-            
-            // don't cut from indexNumber -2 cause i will replace pre[indexNumber-2] by index Element in Calc.jsx file
-            prev = prev.filter((ele , index) => index < indexNumber -1 || index > bracketIndex) ; 
+        else if (prev[indexNumber -1]?.props?.children === 'log(' && prev[indexNumber + 1]?.props?.className?.includes('logEle')) {
+            const closingBracket = prev.findIndex((ele, index) => 
+                ele .props?.className?.includes('closingOperation') && index > indexNumber
+            )
+            prev = prev.filter((ele, index) => 
+                !(index >= indexNumber -1 && index <= closingBracket) || index === indexNumber
+            )
+        }
+        
+        // tenPower 
+
+        else if (prevEle?.includes('ten')) {
+            const separateIndex = prev.findIndex((ele , index) => ele.props?.className === 'separate' && index > indexNumber) ; 
+            prev = prev.filter((ele , index) => !(index >= indexNumber -1 && index <= separateIndex ) || index === indexNumber)
+        }
+        else if (prevEle?.includes('yValue powerTheTen')) {
+            if (
+                !prev[indexNumber + 1]?.props?.className?.includes('yValue') &&
+                !prev[indexNumber - 2 ]?.props?.className?.includes('yValue')
+            ) {
+                prev = prev.map((ele , index) => {
+                    if (index === indexNumber -1) return <span className="power yElement powerTheTen"></span> ; 
+                    else return ele ; 
+                }) 
+            }
+            else {
+                prev = prev.filter((ele , index) => index !== indexNumber -1)
+            }
+        }
+        else if (prevEle?.includes('yElement powerTheTen')) {
+            prev = prev.filter((ele , index) => {
+                return index !== indexNumber -1 && index !== indexNumber -2 && index !== indexNumber + 1
+            })
+        }
+
+        // Factorial and X Power -1
+        else if (prevEle?.includes('xValue factorialEle') || prevEle?.includes('xValue xPowerNOne')) {
+            const operation = prevEle?.includes('factorialEle') ? 'factorialEle' : 'xPowerNOne' ;  
+            let openingBracket;
+            if (prev[indexNumber -1]?.props?.children?.includes(')')) {
+                openingBracket = prev.slice(0 , indexNumber).findLastIndex(ele => ele.props?.children.includes('(')) ; 
+            }
+
+            prev = prev.map((ele , index) => {
+                if ( (openingBracket === undefined && index === indexNumber -1) ||  (openingBracket !== undefined && ele.props?.children?.includes('('))) {
+                    return <span className= {`xElement ${operation}`} ></span>;  
+                } 
+                else if (openingBracket !== undefined && index >= openingBracket && index <= indexNumber -1) return ; 
+                else return ele ; 
+            })
+        }
+        else if (prevEle?.includes('xElement factorialEle') || prevEle?.includes('xElement xPowerNOne')) {
+            prev = prev.filter((ele , index) => index !== indexNumber -1)
+        }
+        
+        // anonymous-root 
+        else if (prevEle?.includes('xElement anonymousR')) { 
+            const firstPowerEle = prev.slice(0 , indexNumber).findLastIndex((ele , index) => 
+                ele.props?.className?.includes('yElement anonymousR') || ele.props?.className?.includes('yValue anonymousR')); 
+            prev = prev.filter((ele, index) => !(index >= firstPowerEle && index <= indexNumber + 1) || index === indexNumber) ; 
+        }
+        else if (prevEle?.includes('anonymousR firstRootEle') && !prev[indexNumber + 1]?.props?.className?.includes('anonymousR')) {
+            prev = prev.map((ele , index) => {
+                if (index === indexNumber -1) return <span className="xElement anonymousR"></span> ; 
+                else return ele ; 
+            })
+        }
+        else if (prevEle?.includes('anonymousR firstRootEle') && prev[indexNumber + 1]?.props?.className?.includes('anonymousR')) {
+            prev = prev.map((ele , index) => {
+                if (index === indexNumber + 1 && ele?.props?.className.includes('anonymousR')) {
+                    return <div className= 'xValue anonymousR firstRootEle'>{ele?.props?.children}</div>
+                }
+                else if (index !== indexNumber -1) return ele ; 
+            })
+        }
+        else if (prevEle?.includes('yElement anonymousR')) {
+            const lastAnonyEle = prev.findIndex((ele, index) => 
+                index > indexNumber && ele.props?.className?.includes('anonymousR') && prev[index + 1]?.props?.className === 'separate'
+            )
+
+            prev = prev.filter((ele, index) => !(index >= indexNumber -1 && index <= lastAnonyEle + 1) || index === indexNumber)
+        }
+
+        // square-root
+        else if (prevEle?.includes('firstRootEle') && !prev[indexNumber + 1]?.props?.className?.includes('rootValue')) {
+            prev = prev.map((ele , index) => {
+                if (index === indexNumber -1) return <span className="xElement rootValue"></span> ; 
+                else return ele ; 
+            })
+        }
+        else if (prevEle?.includes('firstRootEle') && prev[indexNumber + 1]?.props?.className?.includes('rootValue')) {
+            prev = prev.map((ele , index) => {
+                if (index === indexNumber + 1 && ele?.props?.className.includes('rootValue')) {
+                    return <div className= 'xValue rootValue firstRootEle'>{ele?.props?.children}</div>
+                }
+                else if (index !== indexNumber -1) return ele ; 
+            })
+        }
+        else if (prevEle?.includes('rootValue')) {
+            prev = prev.filter((ele , index) => index !== indexNumber -1)
+        }
+        
+        // sin , cos , tan , ln , log
+        else if (prevEle === 'bracketOperation') {
+            if (prev[indexNumber + 1]?.props?.children === ')') {
+                prev = prev.filter((ele , index) => index !== indexNumber -1 && index !== indexNumber + 1)
+            }
+            else prev = prev.filter((ele , index) => index !== indexNumber -1 )
         }
 
         // xPowerY
-        else if (prevEle?.includes('xValue')) {
-            prev = prev.map((ele , index) => {
-                if (index === indexNumber -1) return <span className="xElement"></span> ; 
-                else return ele ; 
+        else if (prevEle?.includes('xValue') && !prevEle?.includes('anonymous')) {
+            let openingBracket ; 
+            if (prev[indexNumber -1]?.props?.children === ')') {
+                openingBracket = prev.slice(0 , indexNumber).findLastIndex(ele => ele.props?.children === '(') ; 
+            }
+            prev = prev.map((ele, index) => {
+                if (index === openingBracket || (index === indexNumber -1 && !openingBracket)) return <span className="xElement"></span> ; 
+                else if (!(index > openingBracket && index <= indexNumber -1)) return ele ; 
             })
         }
         else if (prevEle?.includes('xElement')) {
             prev = prev.filter((ele , index) => index !== indexNumber -1 && index !== indexNumber + 1 && index !== indexNumber + 2)
         }
         else if (prevEle?.includes('yValue')) {
-            if (!prev[indexNumber + 1]?.props?.className?.includes('yValue') && !prev[indexNumber - 2 ]?.props?.className?.includes('yValue')) {
+            const isAnonymousPower = prev[indexNumber + 1]?.props?.className.includes('anonymousR') ; 
+            if (
+                !prev[indexNumber + 1]?.props?.className?.includes('yValue') && 
+                !prev[indexNumber - 2 ]?.props?.className?.includes('yValue')
+            ) {
                 prev = prev.map((ele , index) => {
-                    if (index === indexNumber -1) return <span className="power yElement"></span> ; 
+                    if (index === indexNumber -1) return <span className={`power yElement ${isAnonymousPower && 'anonymousR'}`}></span> ; 
                     else return ele ; 
                 }) 
             }
@@ -305,7 +335,7 @@ export default function deleteOneEle(context) {
         }
         else if (prevEle?.includes('yElement')) {
 
-            prev.splice(indexNumber + 1 , 1) ; 
+            prev = prev.filter((ele, index) => index !== indexNumber + 1)
             if (prev[indexNumber -2]?.props?.className?.includes('xValue')) {
                 const prevEleValue = prev[indexNumber -2]?.props?.children ; 
                 prev = prev.map((ele , index) => {
@@ -330,15 +360,14 @@ export default function deleteOneEle(context) {
                 else return ele 
             })
         }
-        else { prev = prev.filter((ele ,index) => index !== indexNumber -1)} ; 
+        // contain bracket
+        else if(prev[indexNumber -1]?.props?.children === ')' && prevEle?.includes('closingOperation')) {
+            const operationIndex = prev.slice(0 , indexNumber ).findLastIndex(ele => ele.props?.children?.includes('(')) ; 
+            prev = prev.filter((ele , index) => !(index >= operationIndex && index < indexNumber) )
+        }
+        else prev = prev.filter((ele ,index) => index !== indexNumber -1) ; 
 
         return prev.filter(ele => ele !== undefined) ; 
 
     })
-
 }
-
-
-
-// 166
-// 207

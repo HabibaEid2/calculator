@@ -7,6 +7,8 @@ import getNum from '../functions/getNum';
 import deleteOneEle from '../functions/deleteOneEle';
 import arrangeOperations from '../functions/arrangeOperations';
 import deleteAllEles from '../functions/deleteAllEles';
+import { toast, ToastContainer } from 'react-toastify';
+import getResult from '../functions/getResult';
 
 export default function Calc() {
     const displayRef = useRef() ; 
@@ -18,13 +20,27 @@ export default function Calc() {
     // check operation contain brackets or not and excute it first
     function checkBrackets(value) {
 
-        let getBrackets = value.match(/[(][^\[^()\]]*[)]/ig) || [] ; 
+        const operations = value.split(' ').filter(ele => ele !== '') ; 
+        if (
+            value.split(' ').filter(ele => ele === '(').length === value.split(' ').filter(ele => ele === ')').length &&
+            context?.displayOperations?.findIndex(ele => ele.props?.className?.includes('Element')) === -1 &&
+            (!operations.filter((ele , index) => 
+            (   ele === 'plus' || ele === 'minus'||
+                ele === 'multiplication' || ele === 'division'  ) && 
+                ((isNaN(operations[index -1]) && operations[index -1] !== ')') || isNaN(operations[index + 1]) && operations[index +1] !== '(')).length > 0)
+        ) {
+            // get result of smallest brackets first
+            let getBrackets = value.match(/[(][^\[^()\]]*[)]/ig) || [] ; 
 
-        for(let i of getBrackets) {
-            value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1) , context)) ; 
+            for(let i of getBrackets) {
+                value = value.replace(i , arrangeOperations(i.slice(1 , i.length -1) , context)) ; 
+            }
+            if(value.includes('(') && !isNaN(value[value.indexOf('(') + 1])) checkBrackets(value) ; 
+            else arrangeOperations(value , context) ;
+        } 
+        else {
+            toast.error('write operation correctly!')
         }
-        if(value.includes('(') && !isNaN(value[value.indexOf('(') + 1])) checkBrackets(value) ; 
-        else arrangeOperations(value , context) ; 
     }
 
     function goLeft() {
@@ -67,11 +83,9 @@ export default function Calc() {
     useEffect(() => {
         if (
             context.displayOperations[indexNumber -1]?.props.className?.includes('power ') &&
-            !context.displayOperations[indexNumber]?.props.className.includes('modify')
+            !context.displayOperations[indexNumber]?.props.className?.includes('modify')
         ) {
-
-            console.log('yes one')
-            if (context.displayOperations[indexNumber -1]?.props.className?.includes('down')) {
+            if (context.displayOperations[indexNumber -1]?.props.className?.includes('logEle')) {
                 context.setDisplayOperations(prev => {
                     prev.splice(indexNumber , 1 , <div value = "index" className='index modify logBase'></div>) ; 
                     return prev ; 
@@ -88,7 +102,6 @@ export default function Calc() {
             !context.displayOperations[indexNumber -1]?.props.className?.includes('power') &&
             context.displayOperations[indexNumber]?.props.className !== 'index'
         )  {
-            console.log('yes two')
             context.setDisplayOperations(prev => {
                 prev.splice(indexNumber , 1 , <div value = "index" className='index'></div>) ; 
                 return prev ; 
@@ -99,9 +112,9 @@ export default function Calc() {
         setDisplayInScreen(context.displayOperations)
     } , [context]) ; 
 
-
     return (
         <div className="calculator">
+            <ToastContainer position='top-center' />
             <div className="container">
 
                 <div className="display">
@@ -124,9 +137,9 @@ export default function Calc() {
                     </div>
 
                     {/* operations */}
-                    <div className="operation">
+                    <div className="operations">
                         <button value=' xPowerY ' className="xPowerY" onClick={(e) => getNum(e , context)}>
-                            <i className="fa-solid fa-x"></i>
+                            <i value=' xPowerY ' className="fa-solid fa-x"></i>
                         </button>
                         <button value=' tenPower ' className='tenPower' onClick={(e) => getNum(e , context)}>10</button>
                         <button 
@@ -136,15 +149,14 @@ export default function Calc() {
                             <i className="fa-solid fa-x"></i> !
                         </button>
                         <button 
-                            value = ' xPowerN1 ' 
-                            onClick={(e) => getNum(e , context)} 
-                            className='xPowerN1'>
+                            value = ' xPowerNOne ' 
+                            onClick={(e) => getNum(e , context)} >
                             <i className="fa-solid fa-x"></i>
                             <sup>-1</sup>
                         </button>
                         <button value=' log ' onClick={(e) => getNum(e , context)} >log</button>
                         <button value=' xLogY ' className='logarithm' onClick={(e) => getNum(e , context)}>
-                            log<sub>x</sub>y
+                            log<sub value=' xLogY '>x</sub>y
                         </button>
                         <button 
                             value=' pi '
@@ -170,7 +182,7 @@ export default function Calc() {
                         <button value='(-)' onClick={(e) => getNum(e , context)} >(-)</button>
 
 
-                        <button onClick={() => checkBrackets(context.operation_content)}>=</button>
+                        <button className='equal' onClick={() => checkBrackets(context.operation_content)}>=</button>
 
 
                     </div>
@@ -180,24 +192,24 @@ export default function Calc() {
                         <button value='7' onClick={(e) => getNum(e , context)}>7</button>
                         <button value='8' onClick={(e) => getNum(e , context)}>8</button>
                         <button value='9' onClick={(e) => getNum(e , context)}>9</button>
-                        <button value = '(' onClick={(e) => getNum(e , context)}>(</button>
-                        <button value = ')' onClick={(e) => getNum(e , context)}>)</button>
+                        <button className='bracket' value = '(' onClick={(e) => getNum(e , context)}>(</button>
+                        <button className='bracket' value = ')' onClick={(e) => getNum(e , context)}>)</button>
                         <button value='4' onClick={(e) => getNum(e , context)}>4</button>
                         <button value='5' onClick={(e) => getNum(e , context)}>5</button>
                         <button value='6' onClick={(e) => getNum(e , context)}>6</button>
-                        <button value=' multiplication ' onClick={(e) => getNum(e , context)}>
+                        <button className='operation' value=' multiplication ' onClick={(e) => getNum(e , context)}>
                             <i className="fa-solid fa-x"></i>
                         </button>
-                        <button value=' divition ' onClick={(e) => getNum(e , context)}>
+                        <button className='operation' value=' division ' onClick={(e) => getNum(e , context)}>
                             <i className="bold fa-solid fa-divide"></i>
                         </button>
                         <button value='1' onClick={(e) => getNum(e , context)}>1</button>
                         <button value='2' onClick={(e) => getNum(e , context)}>2</button>
                         <button value='3' onClick={(e) => getNum(e , context)}>3</button>
-                        <button value=' plus ' onClick={(e) => getNum(e , context)}>
+                        <button className='operation' value=' plus ' onClick={(e) => getNum(e , context)}>
                             <i className="fa-solid fa-plus"></i>
                         </button>
-                        <button value=' minus ' onClick={(e) => getNum(e , context)}>
+                        <button className='operation' value=' minus ' onClick={(e) => getNum(e , context)}>
                             <i className=" bold fa-solid fa-minus"></i>
                         </button>
                         <button value='0' onClick={(e) => getNum(e , context)}>0</button>

@@ -1,6 +1,8 @@
+import piIcon from './../assets/pi.png'
 export default function showInScreen(e) {
     let value = [] ; 
-    switch(e.target.value) {
+
+    switch(e.currentTarget.value) {
         case ' plus ' :
             value.push(<span>+</span>)
             break ; 
@@ -14,7 +16,7 @@ export default function showInScreen(e) {
                 </div>
             )
             break ; 
-        case ' divition ' : 
+        case ' division ' : 
             value.push(
                 <div>
                     <i className="bold fa-solid fa-divide"></i>
@@ -30,33 +32,33 @@ export default function showInScreen(e) {
             break ; 
         case ' factorial ' : 
             value.push( 
-                <span className='xElement display-factorial'></span> , 
+                <span className='xElement factorialEle'></span> , 
                 <span className='separate'></span>
             ) 
             break ; 
         case ' tenPower ' : 
             value.push(
-                <span>10</span> , 
-                <span className='power yElement'></span> , 
+                <span className="ten">10</span> , 
+                <span className='power yElement powerTheTen'></span> , 
                 <span className='separate'></span>
             )
             break ;
-        case ' xPowerN1 ' : 
+        case ' xPowerNOne ' : 
             value.push(
-                <span className="xElement power_1"></span> ,
+                <span className="xElement xPowerNOne"></span> ,
                 <span className='separate'></span> 
             )
             break ; 
         case ' square-root ' : 
             value.push(
-                <span className="xElement rootValue"></span> , 
+                <div className="xElement rootValue"></div> , 
                 <span className='separate'></span>
             )
             break ;
         case ' anonymous-root ' : 
             value.push( 
-                <span className="power yElement exponent"></span> , 
-                <span className="xElement rootValue"></span> ,
+                <span className="power yElement anonymousR"></span> , 
+                <div className="xElement anonymousR"></div> ,
                 <span className="separate"></span>
             )
             break ; 
@@ -68,30 +70,30 @@ export default function showInScreen(e) {
             )
             break ; 
         case ' sin ' :
-            value.push( <span className='sin'>sin(</span> ) 
+            value.push( <span className='bracketOperation'>sin(</span> ) 
             break ;
         case ' cos ' :
-            value.push( <span className='cos'>cos(</span> ) 
+            value.push( <span className='bracketOperation'>cos(</span> ) 
             break ; 
         case ' tan ' :
-            value.push( <span className='tan'>tan(</span> ) 
+            value.push( <span className='bracketOperation'>tan(</span> ) 
             break ;
         case ' ln ' :
-            value.push( <span className='tan'>ln(</span> ) 
+            value.push( <span className='bracketOperation'>ln(</span> ) 
             break ; 
         case ' log ' :
-            value.push( <span className='tan'>log(</span> ) 
+            value.push( <span className='bracketOperation'>log(</span> ) 
             break ;
         case ' xLogY ' : 
             value.push(
                 <span>log(</span> , 
-                <span className='power yElement down'></span> , 
-                <span className='xElement logValue'></span> , 
-                <span>)</span>
+                <span className='power yElement logEle'></span> , 
+                <span className='xElement logEle'></span> , 
+                <span className="closingOperation">)</span>
             )
             break ; 
         default :
-            value.push(<span>{e.target.value.trim()}</span>) 
+            value.push(<span>{e.currentTarget.value.trim()}</span>) 
             break ;
     }
 

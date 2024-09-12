@@ -42,23 +42,27 @@ export default function arrangeOperations (string , context) {
         result = getResult(slice) ; 
         return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
     }
-    else if (arr.includes('factorial') || arr.includes('xPowerN1')) {
-        index = arr.indexOf('xPowerN1') || arr.indexOf('factorial') ; 
+    else if (arr.includes('factorial') || arr.includes('xPowerNOne')) {
+        index = arr.indexOf(arr.includes('xPowerNOne') ? 'xPowerNOne' : 'factorial')
         slice = arr.slice(index -1, index + 1) ; 
         result = getResult(slice) ; 
 
         return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)
     }
-    else if (arr.includes('multiplication') || arr.includes('divition')) {
+    else if (arr.includes('multiplication') || arr.includes('division')) {
 
         // excute which on left first
 
-        if (arr.lastIndexOf('multiplication') > arr.lastIndexOf('divition')) {
-            index = arr.lastIndexOf('multiplication') ; 
+        if (arr.includes('multiplication') && arr.includes('division')) {
+            if (arr.indexOf('multiplication') < arr.indexOf('division')) {
+                index = arr.indexOf('multiplication') ; 
+            }
+            else {
+                index = arr.indexOf('division') ; 
+            }
         }
-        else {
-            index = arr.lastIndexOf('divition') ; 
-        }
+        else if (arr.includes('multiplication')) index = arr.indexOf('multiplication') ; 
+        else index = arr.indexOf('division')
 
         // get the single operations and get the result of them one by one
         slice = arr.slice(index - 1 , index + 2) ; 
@@ -69,12 +73,17 @@ export default function arrangeOperations (string , context) {
     }
 
     else if (arr.includes('plus') || arr.includes('minus')) {
-        if (arr.lastIndexOf('plus') > arr.lastIndexOf('minus')) {
-            index = arr.lastIndexOf('plus') ; 
+        if (arr.includes('plus') && arr.includes('minus')) {
+            if (arr.indexOf('plus') > arr.indexOf('minus')) {
+                index = arr.indexOf('minus') ; 
+            }
+            else {
+                index = arr.indexOf('plus') ; 
+            }
         }
-        else {
-            index = arr.lastIndexOf('minus') ; 
-        }
+        else if (arr.includes('plus')) index = arr.indexOf('plus') ; 
+        else index = arr.indexOf('minus')
+        
         slice = arr.slice(index - 1 , index + 2) ; 
         result = getResult(slice) ; 
         return arrangeOperations(arr.join(' ').replace(slice.join(' ') , result) , context)

@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export default function getResult(problem) {
 
     let result ; 
@@ -18,7 +20,7 @@ export default function getResult(problem) {
                 case 'minus' : 
                     result -= +problem[i + 1] ; 
                     break ; 
-                case 'divition' :  
+                case 'division' :  
                     result /= +problem[i + 1] ; 
                     break ; 
                 case 'xPowerY' : 
@@ -33,7 +35,7 @@ export default function getResult(problem) {
                 case 'tenPower' : 
                     result = Math.pow(10 , +problem[i + 1]) ; 
                     break ; 
-                case 'xPowerN1' : 
+                case 'xPowerNOne' : 
                     result = Math.pow(+problem[i - 1] , -1) ; 
                     break ; 
                 case 'square-root' : 
@@ -69,6 +71,9 @@ export default function getResult(problem) {
         }
     }
 
-    
-    return ` ${result} ` ; 
+    if (isNaN(result)) {
+        toast.error('write equation correctly!') ; 
+        return 'NaN'
+    }
+    else return ` ${result} ` ; 
 }

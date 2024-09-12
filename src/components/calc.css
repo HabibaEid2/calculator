@@ -10,6 +10,7 @@ i {
     font-family: inherit;
     padding: 10px;
     cursor: pointer;
+    color: #2a3122;
 }
 .calculator i:not(.bold) {
     font-size: 20px;
@@ -29,17 +30,32 @@ i {
     justify-content: center;
     align-items: center;
     padding: 15px;
-    background-color: rgb(59, 59, 59);
+    background-image: url(https://images.pexels.com/photos/2522085/pexels-photo-2522085.jpeg?auto=compress&cs=tinysrgb&w=600);
+    background-size: contain;
+}
+.calculator::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0 0 0 / 41%);
 }
 .calculator .container {
-    background-color: rgb(255, 239, 239);
+    background-color: rgb(255 239 239 / 45%);
     font-size: 22px;
-    font-family: "Marcellus", serif;;
+    font-family: "Marcellus", serif;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(6px);
+    border: solid;
+    border-radius: 9px;
 }
 /* display */
 .calculator .container .display {
     height: 108px;
-    background-color: #c9c9c9;
+    background-color: #93939300;
     position: relative;
     padding: 10px;
 }
@@ -83,14 +99,24 @@ i {
 }
 /* directions */
 .calculator .directions {
-    grid-template-columns: auto auto;
+    display: grid;
+    grid-template-columns: auto auto !important;
     margin: 10px;
     gap: 15px;
+}
+.calculator .directions button {
+    background-color: #11270b6e;
+    color: white;
+    border: none;
 }
 .calculator .directions i {
     font-weight: bold;
 }
 /* operations */
+.calculator .operations button:not(.equal) , .calculator .operation , .calculator .bracket {
+    background-color: #e6e8cba8;
+    border:solid 1px #4b5044;
+}
 .calculator .root {
     position: relative;
 }
@@ -146,7 +172,7 @@ i {
     width: 11px;
     height: 13px;
     border: solid 1px;
-    margin: -4px 7px -4px 2px;
+    margin: -4px 2px -4px 2px;
     font-size: 13px;
 }
 .calculator  .yValue {
@@ -155,87 +181,98 @@ i {
     margin: -4px -2px -4px 3px;
     font-size: 13px;
 }
-.calculator .display-factorial {
+.calculator .factorialEle {
     position: relative;
 }
-.calculator .display-factorial::after {
+.calculator .factorialEle::after {
     content: '\21';
     position: absolute;
     top: -4px;
     right: -9px;
 }
-.calculator .display-factorial + .separate ,
-.calculator .display-factorial + .index + .separate , 
-.calculator .power_1 + .separate ,
-.calculator .power_1 + .index + .separate   
+.calculator .factorialEle + .separate ,
+.calculator .factorialEle + .index + .separate , 
+.calculator .xPowerNOne + .separate ,
+.calculator .xPowerNOne + .index + .separate   
 {
     width: 10px;
 }
-.calculator .power_1 {
+.calculator .xPowerNOne {
     position: relative;
 }
-.calculator .power_1::after {
+.calculator .xPowerNOne::after {
     content: '-1';
     position: absolute;
     top: -11px;
     right: -13px;
     font-size: 13px;
 }
-.calculator .display-square-root {
-    margin-top: -2px;
-    margin-left: -13px;
-    margin-right: -6px;
-}
-.calculator .rootValue:first {
+.calculator .xElement.anonymousR , .calculator .xValue.anonymousR , .calculator .rootValue { 
     position: relative;
 }
-.calculator .rootValue::after 
-{
-    position: absolute;
-    top: 8px;
-    left: 16px;
-    content: "";
-    background-image: url(/src/assets/display-square-root.png);
-    background-repeat: no-repeat;
-    width: 27px;
-    height: 100px;
-    background-size: contain;
+.calculator .firstRootEle , .calculator .xElement.anonymousR , .calculator .xElement.rootValue  {
+    margin-left: 12px;
 }
-.calculator .power.down {
+.calculator .xValue.anonymousR:not(.firstRootEle  )::after , .calculator .xValue.rootValue:not(.firstRootEle )::after  {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -4px;
+    width: 150%;
+    height: 2px;
+    background-color: black;
+}
+.calculator .firstRootEle::after , .calculator .xElement.anonymousR::after , .calculator .xElement.rootValue::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 120%;
+    height: 27px;
+    border-top: solid 2px black;
+    border-left: solid 2px black;
+    background-color: transparent;
+}
+.calculator .xElement.anonymousR::before , .calculator .firstRootEle::before , .calculator .xElement.rootValue::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: -8px;
+    width: 2px;
+    height: 10px;
+    background-color: black;
+    rotate: -30deg;
+}
+.calculator .power.logEle {
     margin: 28px 1px -10px 0px ; 
 }
 .calculator .display .index.logBase {
     height: 13px;
     margin-top: 28px;
 }
-.calculator .summition-display-img {
-    margin-top: 8px;
-    width: 23px;
-    position: relative;
+
+/* anonymous root */
+.calculator .power.anonymousR {
+    margin-right: -6px;
 }
-.calculator .summitionValue {
-    margin-left: -10px;
-    margin-top: 7px;
-}
-.calculator .display .power.summition-top {
-    margin-top: -7px;
-    margin-right: -21px;
-    margin-left: 4px;
-}
-.calculator .display .power.summition-down {
-    margin: 30px 3px -24px 0px;
-    position: relative;
-}
-.calculator  .power.summition-down::after {
-    content: 'x=';
-    position: absolute;
-    bottom: -4px;
-    left: -20px;
-    font-size: 14px;
+.calculator .power.anonymousR + .index {
+    margin-left: 6px;
+    margin-right: -6px;
 }
 /* delete */
 .calculator .deleteOne {
     grid-column: 4 / 6;
+}
+.calculator .deleteOne , .calculator .equal {
+    background-color: #6b3304ad;
+    border: none;
+    color: white;
+}
+/* numbers */
+.calculator .numbers button:not(.operation , .bracket , .deleteOne ){
+    background-color: #515648;
+    color: white;
+    border: solid 1px black;
 }
 /* animations */
 @keyframes flutter {
@@ -246,4 +283,7 @@ i {
     100% {
         opacity: 1;
     }
+}
+button * {
+    pointer-events: none
 }
