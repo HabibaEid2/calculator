@@ -75,5 +75,5 @@ export default function getResult(problem) {
         toast.error('write equation correctly!') ; 
         return 'NaN'
     }
-    else return ` ${result} ` ; 
+    else return ` ${Number.isInteger(+result) ? result : (result).toFixed(3)} ` ; 
 }
