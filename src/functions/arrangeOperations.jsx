@@ -90,7 +90,8 @@ export default function arrangeOperations (string , context) {
 
     }
     else {
-        context.setResult(string) ; 
+        // put result direct in the screen
+        context.setResult(string.includes('pi')? 3.14 : string) ; 
         return string ; 
     }
 }

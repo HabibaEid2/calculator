@@ -27,7 +27,8 @@ export default function Calc() {
             (!operations.filter((ele , index) => 
             (   ele === 'plus' || ele === 'minus'||
                 ele === 'multiplication' || ele === 'division'  ) && 
-                ((isNaN(operations[index -1]) && operations[index -1] !== ')') || isNaN(operations[index + 1]) && operations[index +1] !== '(')).length > 0)
+                ((operations[index -1] === 'plus' || operations[index -1] === 'minus' || operations[index -1] === 'multiplication' || operations[index -1] === 'divistion' ) ||
+                operations[index +1] === 'plus' || operations[index +1] === 'minus' || operations[index +1] === 'multiplication' || operations[index +1] === 'divistion' )).length > 0)
         ) {
             // get result of smallest brackets first
             let getBrackets = value.match(/[(][^\[^()\]]*[)]/ig) || [] ; 
@@ -111,6 +112,7 @@ export default function Calc() {
 
         setDisplayInScreen(context.displayOperations)
     } , [context]) ; 
+
 
     return (
         <div className="calculator">

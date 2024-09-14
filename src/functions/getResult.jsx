@@ -4,6 +4,10 @@ export default function getResult(problem) {
 
     let result ; 
 
+    if (problem.includes('pi')) {
+        problem = problem.join(' ').replaceAll('pi' , '3.14').split(' ')
+    }
+
     for(let i = 0 ; i < problem.length ; i++) {
 
         if (i === 0 && !isNaN(problem[i])) {
@@ -71,7 +75,6 @@ export default function getResult(problem) {
         }
     }
 
-    console.log('result : ' , typeof(+result))
 
     if (isNaN(result)) {
         toast.error('write equation correctly!') ; 

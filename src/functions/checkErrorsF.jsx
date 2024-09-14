@@ -30,6 +30,7 @@ export default function checkErrorsF (value , context) {
                 !value.includes('minus') &&
                 !value.includes('multiplication') &&
                 !value.includes('division') &&
+                !value.includes('(-)') &&
                 !value.includes('pi') 
             )
         )

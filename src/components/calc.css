@@ -30,8 +30,8 @@ i {
     justify-content: center;
     align-items: center;
     padding: 15px;
-    background-image: url(https://images.pexels.com/photos/2522085/pexels-photo-2522085.jpeg?auto=compress&cs=tinysrgb&w=600);
-    background-size: contain;
+    background-image: url(https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
+    background-size: cover;
 }
 .calculator::after {
     content: '';
@@ -104,8 +104,8 @@ i {
     margin: 10px;
     gap: 15px;
 }
-.calculator .directions button {
-    background-color: #11270b6e;
+.calculator .directions button , .calculator .equal{
+    background-color: #061c17;
     color: white;
     border: none;
 }
@@ -114,7 +114,7 @@ i {
 }
 /* operations */
 .calculator .operations button:not(.equal) , .calculator .operation , .calculator .bracket {
-    background-color: #e6e8cba8;
+    background-color: #09282400;
     border:solid 1px #4b5044;
 }
 .calculator .root {
@@ -262,15 +262,13 @@ i {
 /* delete */
 .calculator .deleteOne {
     grid-column: 4 / 6;
-}
-.calculator .deleteOne , .calculator .equal {
-    background-color: #6b3304ad;
-    border: none;
+    background-color: #061c17;
+    border: solid 1px black ;
     color: white;
 }
 /* numbers */
 .calculator .numbers button:not(.operation , .bracket , .deleteOne ){
-    background-color: #515648;
+    background-color: #09282400;
     color: white;
     border: solid 1px black;
 }

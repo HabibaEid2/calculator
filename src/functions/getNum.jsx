@@ -104,13 +104,13 @@ export default function getNum(e , context) {
         else if (lastEleClass?.includes('yValue')) {
             arr.push(<div className='power yValue'>{value[value.length -1]?.props?.children}</div>) ;
         }
-        else if (lastEleClass === 'bracketOperation') {
+        else if (lastEleClass === 'bracketOperation' && !prev[indexNumber + 1]?.props?.className.includes('closingOperation')) {
             arr.push(
             <span className="bracketOperationValue">{value[value.length -1]?.props?.children}</span> , 
             <span className="closingOperation">)</span>
             )
         }
-        else if (lastEleClass?.includes('bracketOperationValue')) {
+        else if (lastEleClass?.includes('bracketOperation')) {
             arr.push(<span className="bracketOperationValue">{value[value.length -1]?.props?.children}</span>)
         }
         else arr.push(value) ;
@@ -125,6 +125,7 @@ export default function getNum(e , context) {
             if (!isNaN(ele)) return ele = [...ele] ; 
             else return ele ; 
         }).flat() ; 
+
 
         const prevEle = context.displayOperations[indexNumber -1]?.props ;
         let additionalCount = 0 ; 
@@ -146,8 +147,8 @@ export default function getNum(e , context) {
         if ( context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('ten')).length > 0 )
             additionalCount += 2 ;
         
-        if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('bracketOperation')).length > 0)
-            additionalCount += 2 ; 
+        if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className === 'bracketOperation').length > 0)
+            additionalCount += 2*(context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className ==='bracketOperation').length) ;
 
         if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('factorialEle')).length > 0)
             additionalCount += 1 ;
@@ -155,7 +156,6 @@ export default function getNum(e , context) {
         if (context.displayOperations.slice(0 , indexNumber).filter(ele => ele.props?.className?.includes('xPowerNOne')).length > 0 )
             additionalCount += 1 ; 
 
-        if (e.target.value === ' pi ') e.target.value = '3.14'
         if (e.target.value === ' anonymous-root ' || e.target.value === ' xLogY ') {
             arr.splice((indexNumber + additionalCount - (separateCount + xElementCount + operationBracket)) , 0 , `( ) ${e.target.value} ( )`)
         }
@@ -216,7 +216,7 @@ export default function getNum(e , context) {
         }
 
         // Bracket Operations
-        else if (prevEle?.className?.includes('bracketOperation') || prevEle?.className?.includes('bracketOperationValue')) {
+        else if (prevEle?.className?.includes('bracketOperation')) {
             const equation = (indexNumber -1) + additionalCount - (+xElementCount + +separateCount + operationBracket)
             arr.splice(equation , 0, e.target.value)
         }
