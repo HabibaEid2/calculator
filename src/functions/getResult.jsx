@@ -71,9 +71,11 @@ export default function getResult(problem) {
         }
     }
 
+    console.log('result : ' , typeof(+result))
+
     if (isNaN(result)) {
         toast.error('write equation correctly!') ; 
         return 'NaN'
     }
-    else return ` ${Number.isInteger(+result) ? result : (result).toFixed(3)} ` ; 
+    else return ` ${Number.isInteger(+result) ? result : (+result).toFixed(3)} ` ; 
 }
